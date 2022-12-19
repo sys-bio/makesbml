@@ -16,12 +16,13 @@
       A -> B; k1*A
       </textarea>
         
-      <button id="ClickMe">Say Hello</button> 
+      <button id="ClickMe" py-click="sayHello()">Say Hello</button> 
         
       <p>Model is <label id='mymodel'></label></p>
            
       <py-script> 
-     print ("hello")
+         def sayHello():
+             print ("I was clicked")
         </py-script>
     </h1>
 </body>
