@@ -6,7 +6,10 @@
 <body>
     <h1 id="msg">
         <py-script> 
+            import matplotlib.pyplot as plt
             print('Hello World') 
+            plt.plot([1,2,3,4],[4.5,7.8,9.8,2.3])
+            plt.show()
         </py-script>
     </h1>
 </body>
