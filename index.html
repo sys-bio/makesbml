@@ -16,13 +16,12 @@
       A -> B; k1*A
       </textarea>
         
-      <div id="matplotlib-lineplot"> </div>
+      <p>Model is <u><label id='mymodel'></label></u></p>
         
+      
       <py-script> 
-            import matplotlib.pyplot as plt
-            print('Hello World: do a plot ') 
-            plt.plot([1,2,3,4],[4.5,7.8,9.8,2.3])
-            display(plt)
+          abc = Element('antimony').element.value
+          Element('mymodel').write(abc)
         </py-script>
     </h1>
 </body>
