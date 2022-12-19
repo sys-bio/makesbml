@@ -16,12 +16,15 @@
       A -> B; k1*A
       </textarea>
         
-      <p>Model is <u><label id='mymodel'></label></u></p>
+       <button id = "show_output" class = "btn btn-primary" type = "submit" pys-onClick="show_output">Show Output</button>
         
-      
+      <p>Model is <label id='mymodel'></label></p>
+           
       <py-script> 
-          abc = Element('antimony').element.value
-          Element('mymodel').write(abc)
+          def show_output(*args, **kwargs):
+              abc = Element('antimony').element.value
+              output = Element("output_div")
+              output.write(abc)
         </py-script>
     </h1>
 </body>
