@@ -5,10 +5,10 @@
 
 <body>
     <h1 id="msg">
-       <py-config>
-        packages = [
-          "matplotlib"
-        ]
+      <py-config type="json">
+        {
+          "packages": ["matplotlib"]
+        }
       </py-config>
         
       <div id="matplotlib-lineplot"> </div>
@@ -17,7 +17,7 @@
             import matplotlib.pyplot as plt
             print('Hello World: do a plot ') 
             plt.plot([1,2,3,4],[4.5,7.8,9.8,2.3])
-            plt.show()
+            display(plt)
         </py-script>
     </h1>
 </body>
