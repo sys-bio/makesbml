@@ -7,10 +7,14 @@
 <body>
     <h1 id="msg">
       <py-config type="toml">
-        [[fetch]]
-        files = ["https://github.com/sys-bio/makesbml/blob/gh-pages/myadd.py"]
       </py-config>
-        
+            
+    <py-env>
+      - paths:
+        - /myadd.py
+</py-env>
+       
+   
       <div>Type your model here here</div>
       <textarea id="antimony" name="antimony" rows="12" cols="64">
       A -> B; k1*A
