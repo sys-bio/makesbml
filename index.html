@@ -86,8 +86,8 @@ class Node:
         if self.val == '-':
            mathml += '&lt;apply&gt;' 
                                
-        #if not (self.val in ['+', '-', '*', '/']):
-        #   mathml = mathml + '<ci>' + self.val + '</ci>'
+        if not (self.val in ['+', '-', '*', '/']):
+           mathml = mathml + '&lt;ci&gt;' + self.val + '&lt;/ci&gt;'
             
         #print(self.val, end=' ')
         
@@ -96,7 +96,7 @@ class Node:
         if self.right:
             mathml += self.right.traversePreOrder()
         if self.val in ['+', '-', '*', '/']:
-           mathml += '</apply>'
+           mathml += '&lt;/apply&gt;'
         return mathml
 
     # Traverse inorder
@@ -176,7 +176,7 @@ class InfixToMathML:
     
     def getMathML (self):
         tree = self.parse ()
-        mathml = ''
+        mathml = '&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;' + '\n'
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
