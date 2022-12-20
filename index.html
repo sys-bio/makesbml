@@ -244,7 +244,7 @@ class antToSbml:
         return astr
 
     def getSBML(self):
-        lines = self.antStr.split(',');  
+        lines = self.antStr.split('\n');  
         print ('lines = ', lines)
         for line in lines:
             P1 = line.split (';')
@@ -337,7 +337,7 @@ class antToSbml:
    
       <div>Type your model here here</div>
       <textarea id="antimony" name="antimony" style="white-space: pre-wrap;" rows="12" cols="64">
-      A -> B; k1*A,
+      A -> B; k1*A
       B -> C; k2*B
       </textarea>
       <p>
