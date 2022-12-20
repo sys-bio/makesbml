@@ -207,14 +207,14 @@ class antToSbml:
         self.header += '&lt;listOfUnits&gt;' + '\n'
         self.header += '&lt;unit kind="mole" exponent="-1" scale="0" multiplier="1"/&gt;' + '\n'
         self.header += '&lt;unit kind="litre" exponent="1" scale="0" multiplier="1"/&gt;' + '\n'
-        self.header += '&gt;unit kind="second" exponent="-1" scale="0" multiplier="1"/&gt;' + '\n'
+        self.header += '&lt;unit kind="second" exponent="-1" scale="0" multiplier="1"/&gt;' + '\n'
         self.header += '&lt;/listOfUnits&gt;' + '\n'
         self.header += '&lt;/unitDefinition&gt;' + '\n'
         self.header += '&lt;/listOfUnitDefinitions&gt;' + '\n'
 
-        self.compartment = '&gt;listOfCompartments&gt;' + '\n'
-        self.compartment += '&gt;compartment id="comp" size="1" spatialDimensions="3" units="litre" constant="true"/&gt;' + '\n'
-        self.compartment += '&gt;/listOfCompartments&gt;' + '\n'
+        self.compartment = '&lt;listOfCompartments&gt;' + '\n'
+        self.compartment += '&lt;compartment id="comp" size="1" spatialDimensions="3" units="litre" constant="true"/&gt;' + '\n'
+        self.compartment += '&lt;/listOfCompartments&gt;' + '\n'
 
         self.sbmlStr = self.header + self.compartment
 
@@ -235,7 +235,7 @@ class antToSbml:
         
     def makeSpecies (self, id):
         astr = ''
-        astr = astr + '&gt;species compartment="comp" '
+        astr = astr + '&lt;species compartment="comp" '
         astr = astr + "id=\"" + id + '\" '
         astr += ' initialConcentration="1"'
         astr += ' hasOnlySubstanceUnits="false" substanceUnits="mole"'
@@ -280,48 +280,48 @@ class antToSbml:
         #print (products)
         #print (expression)
 
-        self.sbmlStr += '&gt;listOfSpecies&gt;' + '\n'
+        self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
         astr = ''
         for id in self.speciesList:
             astr = astr + self.makeSpecies(id)
             
         self.sbmlStr += astr
-        self.sbmlStr += '&gt;/listOfSpecies&gt;' + '\n'
+        self.sbmlStr += '&lt;/listOfSpecies&gt;' + '\n'
         
-        self.sbmlStr += '&gt;listOfParameters&gt;' + '\n'
+        self.sbmlStr += '&lt;listOfParameters&gt;' + '\n'
         for p in self.parameterList:
-            self.sbmlStr += '&gt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
+            self.sbmlStr += '&lt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
          
-        self.sbmlStr += '&gt;/listOfParameters&gt;' + '\n'
+        self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
         
-        self.sbmlStr += '&gt;listOfReactions&gt;' + '\n'
+        self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
         
         astr = ''
         for idx1, r in enumerate (self.reactions):
             rid = 'J' + str (idx1)
-            astr = astr + '&gt;reaction id="' + rid + '"'
+            astr = astr + '&lt;reaction id="' + rid + '"'
             astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
-            astr = astr + '&gt;listOfReactants>' + '\n'
+            astr = astr + '&lt;listOfReactants>' + '\n'
             for idx2, rt in enumerate (r[0]):
-                astr = astr + '&gt;speciesReference species="'
+                astr = astr + '&lt;speciesReference species="'
                 astr = astr + rt[1] + '" stoichiometry="'
                 astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-            astr = astr + '&gt;/listOfReactants&gt;' + '\n' 
+            astr = astr + '&lt;/listOfReactants&gt;' + '\n' 
             
-            astr = astr + '&gt;listOfProducts&gt;' + '\n'
+            astr = astr + '&l;listOfProducts&gt;' + '\n'
             for idx2, rt in enumerate (r[1]):
-                astr = astr + '&gt;speciesReference species="'
+                astr = astr + '&lt;speciesReference species="'
                 astr = astr + rt[1] + '" stoichiometry="'
                 astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-            astr = astr + '&gt;/listOfProducts&gt;' + '\n'  
+            astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
         
-            astr += '&gt;kineticLaw&lt;' + '\n'
+            astr += '&lt;kineticLaw&lt;' + '\n'
             p = InfixToMathML(r[2])
             astr += p.getMathML () + '\n'
-            astr += '&gt;/kineticLaw&gt;' + '\n'
-            astr += '&gt;/reaction&gt;' + '\n'
+            astr += '&lt;/kineticLaw&gt;' + '\n'
+            astr += '&lt;/reaction&gt;' + '\n'
         
-        self.sbmlStr += astr + '</listOfReactions&gt;' + '\n'
+        self.sbmlStr += astr + '&lt;/listOfReactions&gt;' + '\n'
 
         self.sbmlStr = self.sbmlStr + self.trailer
         return self.sbmlStr
