@@ -244,83 +244,85 @@ class antToSbml:
         return astr
 
     def getSBML(self):
-        P1 = self.antStr.split (';')
-        P2 = P1[0].split ('->')
-        reactants = P2[0].split ('+')
-        products = P2[1].split ('+')
+        lines = self.antStr.split('\n')
+        for line in lines:
+            P1 = line.split (';')
+            P2 = P1[0].split ('->')
+            reactants = P2[0].split ('+')
+            products = P2[1].split ('+')
 
-        expression = P1[1].strip()
+            expression = P1[1].strip()
         
-        for idx, r in enumerate(reactants):
-            reactants[idx] = r.strip ()
-        for idx, r in enumerate(reactants):
-            if r[0].isdigit():
-               reactants[idx] = r.split (' ')
-            else:
-               reactants[idx] = [1, reactants[idx]]
-            self.addToSpeciesList (reactants[idx][1])
-           
-        for idx, r in enumerate(products):
-            products[idx] = r.strip ()
-        for idx, r in enumerate(products):
-            if r[0].isdigit():
-               products[idx] = r.split (' ')
-            else:
-               products[idx] = [1, products[idx]]
-            self.addToSpeciesList (products[idx][1])
+            for idx, r in enumerate(reactants):
+                reactants[idx] = r.strip ()
+            for idx, r in enumerate(reactants):
+                if r[0].isdigit():
+                   reactants[idx] = r.split (' ')
+                else:
+                   reactants[idx] = [1, reactants[idx]]
+                self.addToSpeciesList (reactants[idx][1])
+
+            for idx, r in enumerate(products):
+                products[idx] = r.strip ()
+            for idx, r in enumerate(products):
+                if r[0].isdigit():
+                   products[idx] = r.split (' ')
+                else:
+                   products[idx] = [1, products[idx]]
+                self.addToSpeciesList (products[idx][1])
                
-        # Get the parameter list
-        terms = self.my_split(expression, '+/-*')
-        for s in terms:
-            if not (s in self.speciesList):
-                self.parameterList.append (s)
-                #print ('ps:', self.parameterList)
+            # Get the parameter list
+            terms = self.my_split(expression, '+/-*')
+            for s in terms:
+                if not (s in self.speciesList):
+                    self.parameterList.append (s)
+                    #print ('ps:', self.parameterList)
 
-        #print (reactants)
-        #print (products)
-        #print (expression)
+            #print (reactants)
+            #print (products)
+            #print (expression)
 
-        self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
-        astr = ''
-        for id in self.speciesList:
-            astr = astr + self.makeSpecies(id)
-            
-        self.sbmlStr += astr
-        self.sbmlStr += '&lt;/listOfSpecies&gt;' + '\n'
-        
-        self.sbmlStr += '&lt;listOfParameters&gt;' + '\n'
-        for p in self.parameterList:
-            self.sbmlStr += '&lt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
-         
-        self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
-        
-        self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
-        
-        astr = ''
-        for idx1, r in enumerate (self.reactions):
-            rid = 'J' + str (idx1)
-            astr = astr + '&lt;reaction id="' + rid + '"'
-            astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
-            astr = astr + '&lt;listOfReactants>' + '\n'
-            for idx2, rt in enumerate (r[0]):
-                astr = astr + '&lt;speciesReference species="'
-                astr = astr + rt[1] + '" stoichiometry="'
-                astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-            astr = astr + '&lt;/listOfReactants&gt;' + '\n' 
-            
-            astr = astr + '&l;listOfProducts&gt;' + '\n'
-            for idx2, rt in enumerate (r[1]):
-                astr = astr + '&lt;speciesReference species="'
-                astr = astr + rt[1] + '" stoichiometry="'
-                astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-            astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
-        
-            astr += '&lt;kineticLaw&lt;' + '\n'
-            p = InfixToMathML(r[2])
-            astr += p.getMathML () + '\n'
-            astr += '&lt;/kineticLaw&gt;' + '\n'
-            astr += '&lt;/reaction&gt;' + '\n'
-        
+            self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
+            astr = ''
+            for id in self.speciesList:
+                astr = astr + self.makeSpecies(id)
+
+            self.sbmlStr += astr
+            self.sbmlStr += '&lt;/listOfSpecies&gt;' + '\n'
+
+            self.sbmlStr += '&lt;listOfParameters&gt;' + '\n'
+            for p in self.parameterList:
+                self.sbmlStr += '&lt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
+
+            self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
+
+            self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
+
+            astr = ''
+            for idx1, r in enumerate (self.reactions):
+                rid = 'J' + str (idx1)
+                astr = astr + '&lt;reaction id="' + rid + '"'
+                astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
+                astr = astr + '&lt;listOfReactants>' + '\n'
+                for idx2, rt in enumerate (r[0]):
+                    astr = astr + '&lt;speciesReference species="'
+                    astr = astr + rt[1] + '" stoichiometry="'
+                    astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
+                astr = astr + '&lt;/listOfReactants&gt;' + '\n' 
+
+                astr = astr + '&l;listOfProducts&gt;' + '\n'
+                for idx2, rt in enumerate (r[1]):
+                    astr = astr + '&lt;speciesReference species="'
+                    astr = astr + rt[1] + '" stoichiometry="'
+                    astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
+                astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
+
+                astr += '&lt;kineticLaw&lt;' + '\n'
+                p = InfixToMathML(r[2])
+                astr += p.getMathML () + '\n'
+                astr += '&lt;/kineticLaw&gt;' + '\n'
+                astr += '&lt;/reaction&gt;' + '\n'
+
         self.sbmlStr += astr + '&lt;/listOfReactions&gt;' + '\n'
 
         self.sbmlStr = self.sbmlStr + self.trailer
@@ -335,6 +337,7 @@ class antToSbml:
       <div>Type your model here here</div>
       <textarea id="antimony" name="antimony" rows="12" cols="64">
       A -> B; k1*A
+      B -> C; k2*B
       </textarea>
       <p>
         
@@ -347,14 +350,6 @@ class antToSbml:
              abc = Element('antimony').element.value
              print(abc)
              print (myadd (2,3))
-             p = InfixToMathML('k1+A')
-
-             print ('Parsing')
-             try:   
-               mathml = p.getMathML ()
-               print ('mathml =[', mathml)
-             except Exception as e:
-               print ('error = ', e) 
                    
              print ('Generate sbml:')
              m = antToSbml ("A -&gt; B; A*k1")
