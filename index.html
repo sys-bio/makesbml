@@ -80,15 +80,7 @@ class Node:
 
     # Traverse preorder
     def traversePreOrder(self):
-        mathml = ''
-        #if self.val == '+':
-        #   mathml += '<apply> <plus/>' 
-        #if self.val == '-':
-        #   mathml += '<apply> <minus/>' 
-        #if self.val == '*':
-        #   mathml += '<apply> <times/>' 
-        #if self.val == '/':
-        #   mathml += '<apply> <divide/>' 
+        mathml = '' 
            
         #if not (self.val in ['+', '-', '*', '/']):
         #   mathml = mathml + '<ci>' + self.val + '</ci>'
@@ -180,7 +172,6 @@ class InfixToMathML:
     
     def getMathML (self):
         tree = self.parse ()
-        #mathml = '<math xmlns="http://www.w3.org/1998/Math/MathML">' + '\n'
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
