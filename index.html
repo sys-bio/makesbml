@@ -354,9 +354,9 @@ class antToSbml:
                mathml = p.getMathML ()
                print ('mathml =[', mathml, ']')
              except Exception as e:
-               print (e) 
+               print ('error = ', e) 
                    
-             m = antToSbml ("A -> B; A*k1")
+             m = antToSbml ("A -&gt; B; A*k1")
              print ("sbml=", m.getSBML()) 
         </py-script>
     </h1>
