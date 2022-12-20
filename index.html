@@ -176,10 +176,18 @@ class InfixToMathML:
     
     def getMathML (self):
         tree = self.parse ()
+        mathml = ''
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
 
+p = InfixToMathML('k1*A')
+
+print ('Parsing')
+try:   
+   mathml = p.getMathML ()
+except Exception as e:
+   print (e)  
 </py-script>
     
     <py-config>
