@@ -180,14 +180,7 @@ class InfixToMathML:
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
-
-p = InfixToMathML('k1*A')
-
-print ('Parsing')
-try:   
-   mathml = p.getMathML ()
-except Exception as e:
-   print (e)  
+ 
 </py-script>
     
     <py-config>
@@ -210,6 +203,14 @@ except Exception as e:
              abc = Element('antimony').element.value
              print(abc)
              print (myadd (2,3))
+             p = InfixToMathML('k1*A')
+
+             print ('Parsing')
+             try:   
+               mathml = p.getMathML ()
+               print (mathml)
+             except Exception as e:
+               print (e) 
         </py-script>
     </h1>
 </body>
