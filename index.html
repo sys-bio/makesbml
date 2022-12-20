@@ -6,13 +6,11 @@
 
 <body>
     <h1 id="msg">
-      <py-config type="toml">
-      </py-config>
-            
-<py-env>
- - paths:
-   - /myadd.py
-</py-env>
+   <py-config>
+      [[fetch]]
+      from = "https://github.com/sys-bio/makesbml/blob/gh-pages/"
+      files = ["myadd.py"]
+    </py-config>
        
    
       <div>Type your model here here</div>
