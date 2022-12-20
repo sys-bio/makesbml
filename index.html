@@ -203,12 +203,12 @@ class InfixToMathML:
              abc = Element('antimony').element.value
              print(abc)
              print (myadd (2,3))
-             p = InfixToMathML('k1*A')
+             p = InfixToMathML('k1+A')
 
              print ('Parsing')
              try:   
                mathml = p.getMathML ()
-               print (mathml)
+               print ('mathml =[', mathml, ']')
              except Exception as e:
                print (e) 
         </py-script>
