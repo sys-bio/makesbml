@@ -83,7 +83,8 @@ class Node:
         mathml = '' 
         if self.val == '+':
            mathml += '<apply> <plus/>' 
-
+        if self.val == '-':
+           mathml += '<apply> <minus/>' 
                                
         #if not (self.val in ['+', '-', '*', '/']):
         #   mathml = mathml + '<ci>' + self.val + '</ci>'
