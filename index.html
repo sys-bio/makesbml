@@ -347,12 +347,12 @@ class antToSbml:
            
       <py-script> 
          def sayHello():
-             abc = Element('antimony').element.value
-             print(abc)
+             antStr = Element('antimony').element.value
+             print(antStr)
              print (myadd (2,3))
                    
              print ('Generate sbml:')
-             m = antToSbml ("A -&gt; B; A*k1")
+             m = antToSbml (antStr)
              print ("sbml=", m.getSBML()) 
         </py-script>
     </h1>
