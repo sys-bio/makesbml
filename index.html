@@ -6,10 +6,9 @@
 
 <body>
     <h1 id="msg">
-      <py-config type="json">
-        {
-          "packages": []
-        }
+      <py-config type="toml">
+        [[fetch]]
+        files = ["https://github.com/sys-bio/makesbml/blob/gh-pages/myadd.py"]
       </py-config>
         
       <div>Type your model here here</div>
