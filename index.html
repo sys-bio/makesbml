@@ -352,10 +352,11 @@ class antToSbml:
              print ('Parsing')
              try:   
                mathml = p.getMathML ()
-               print ('mathml =[', mathml, ']')
+               print ('mathml =[', mathml)
              except Exception as e:
                print ('error = ', e) 
                    
+             print ('Generate sbml:')
              m = antToSbml ("A -&gt; B; A*k1")
              print ("sbml=", m.getSBML()) 
         </py-script>
