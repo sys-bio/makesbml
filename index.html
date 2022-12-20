@@ -5,11 +5,14 @@
 </head>
 
 <body>
+    <pyscript>
+     def myadd (a,b)
+        return a + b
+    </pyscript>
+    
     <py-config>
-      [[fetch]]
-      from = "https://github.com/sys-bio/makesbml/blob/gh-pages/"
-      files = ["myadd.py"]
     </py-config>
+    
     <h1 id="msg">   
    
       <div>Type your model here here</div>
@@ -26,6 +29,7 @@
          def sayHello():
              abc = Element('antimony').element.value
              print(abc)
+             print (myadd (2,3))
         </py-script>
     </h1>
 </body>
