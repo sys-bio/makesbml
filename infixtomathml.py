@@ -239,7 +239,7 @@ class antToSbml:
         return astr
 
     def getSBML(self):
-        lines = self.antStr.split(',')
+        lines = self.antStr.split('\n')
         for line in lines:
             P1 = line.split (';')
             P2 = P1[0].split ('->')
