@@ -24,6 +24,8 @@ function copytoclipboard() {
 <body>
  
  <py-script src="mymult.py"> </py-script>
+ <py-script src="imp_lex.py"> </py-script>
+ <py-script src="infixtomathml.py"> </py-script>
  
 <py-script>
 from js import alert
@@ -39,178 +41,6 @@ def errorHandler(e):
 
         alert(msg)
         
-import sys
-import re
-
-def lex(characters, token_exprs):
-    pos = 0
-    tokens = []
-    while pos < len(characters):
-        match = None
-        for token_expr in token_exprs:
-            pattern, tag = token_expr
-            regex = re.compile(pattern)
-            match = regex.match(characters, pos)
-            if match:
-                text = match.group(0)
-                if tag:
-                    token = (text, tag)
-                    tokens.append(token)
-                break
-        if not match:
-            sys.stderr.write('Illegal character: %s\n' % characters[pos])
-            sys.exit(1)
-        else:
-            pos = match.end(0)
-    return tokens
-
-RESERVED = 'RESERVED'
-INT      = 'INT'
-ID       = 'ID'
-
-token_exprs = [
-    (r'[ \n\t]+',              None),
-    (r'#[^\n]*',               None),
-    (r'\:=',                   RESERVED),
-    (r'\(',                    RESERVED),
-    (r'\)',                    RESERVED),
-    (r';',                     RESERVED),
-    (r'\+',                    RESERVED),
-    (r'-',                     RESERVED),
-    (r'\*',                    RESERVED),
-    (r'/',                     RESERVED),
-    (r'<=',                    RESERVED),
-    (r'<',                     RESERVED),
-    (r'>=',                    RESERVED),
-    (r'>',                     RESERVED),
-    (r'!=',                    RESERVED),
-    (r'=',                     RESERVED),
-    (r'and',                   RESERVED),
-    (r'or',                    RESERVED),
-    (r'not',                   RESERVED),
-    (r'if',                    RESERVED),
-    (r'then',                  RESERVED),
-    (r'else',                  RESERVED),
-    (r'while',                 RESERVED),
-    (r'do',                    RESERVED),
-    (r'end',                   RESERVED),
-    (r'[0-9]+',                INT),
-    (r'[A-Za-z][A-Za-z0-9_]*', ID),
-]
-
-def imp_lex(characters):
-    return lex(characters, token_exprs)
-                                
-class Node:
-    def __init__(self, key):
-        self.left = None
-        self.right = None
-        self.val = key
-        #self.mathml = ''
-
-    # Traverse preorder
-    def traversePreOrder(self):
-        mathml = '' 
-        if self.val == '+':
-           mathml += '&lt;apply&gt; &lt;plus/&gt;' 
-        if self.val == '-':
-           mathml += '&lt;apply&gt;' 
-        if self.val == '*':
-           mathml += '&lt;apply&gt; &lt;times/&gt;' 
-        if self.val == '/':
-           mathml += '&lt;apply&gt; &lt;divide/&gt;'                              
-        if not (self.val in ['+', '-', '*', '/']):
-           mathml = mathml + '&lt;ci&gt;' + self.val + '&lt;/ci&gt;'
-            
-        #print(self.val, end=' ')
-        
-        if self.left:
-            mathml += self.left.traversePreOrder()
-        if self.right:
-            mathml += self.right.traversePreOrder()
-        if self.val in ['+', '-', '*', '/']:
-           mathml += '&lt;/apply&gt;'
-        return mathml
-
-    # Traverse inorder
-    def traverseInOrder(self):
-        if self.left:
-            self.left.traverseInOrder()
-        if self.right:
-            self.right.traverseInOrder()
-
-    # Traverse postorder
-    def traversePostOrder(self):
-        if self.left:
-            self.left.traversePostOrder()
-        if self.right:
-            self.right.traversePostOrder()
-
-class InfixToMathML:
-    def __init__(self, infix):
-        self.tokenPtr = 0
-        self.token = None
-        self.tokens = imp_lex(infix)
-        
-    def nextToken(self):
-        if self.tokenPtr >= len (self.tokens):
-            self.token = [0, 'None']
-        else:   
-            self.token = self.tokens[self.tokenPtr]
-            self.tokenPtr += 1
-    
-    def factor (self):
-        if self.token[1] == 'ID':
-            n = Node(self.token[0])
-            self.nextToken()
-            return n
-        if self.token[0] == '(':
-            self.nextToken()
-            n = self.expression()
-    
-            if self.token[0] != ')':
-                raise Exception ('Missing right parenthesis')
-            self.nextToken()
-            return n
-
-    def term (self):
-        n1 = self.factor()
-        while self.token[0] in ['*', '/']:
-            op = self.token[0]
-            self.nextToken()
-            n2 = self.factor()
-            n3 = Node (op)   
-            n3.left = n1
-            n3.right = n2
-            n1 = n3
-        return n1
-                   
-    def expression(self):
-        n1 = self.term()
-        while self.token[0] in ['+', '-']:
-            op = self.token[0]
-            self.nextToken()
-            n2 = self.term()
-            n3 = Node (op)   
-            n3.left = n1
-            n3.right = n2
-            n1 = n3      
-        return n1
-        
-    def stmt (self):
-        return self.expression()   
-
-    def parse (self):
-        self.nextToken()
-        return self.stmt ()
-    
-    def getMathML (self):
-        tree = self.parse ()
-        mathml = '&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;' + '\n'
-        m = tree.traversePreOrder()
-        mathml += m + '\n' + '&lt;/math&gt;'
-        return mathml
- 
 class antToSbml:
     def __init__(self, antStr):
         self.antStr = antStr
@@ -363,7 +193,7 @@ class antToSbml:
     </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here B:</h5>
+   <h5>Type your model here D:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    A + B -> C; k1*A*B
    C -> D; k2*C
