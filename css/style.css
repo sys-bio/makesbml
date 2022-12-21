@@ -6,3 +6,8 @@ textarea {
  font-family: Verdana, Arial, Helvetica, sans-serif;
  border: 1px solid black;
 }
+
+.textareaOutput {
+    white-space: pre-wrap;
+}
+
