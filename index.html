@@ -381,7 +381,7 @@ class antToSbml:
     </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here Q:</h5>
+   <h5>Type your model here R:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    A + B -> C; k1*A*B
    C -> D; k2*C
@@ -399,7 +399,7 @@ class antToSbml:
              antStr = Element('antimony').element.value                  
              m = antToSbml (antStr)
              sbml = m.getSBML()            
-             Element('sbml_output').element.innertext = js.formaXmlt(sbml);
+             Element('sbml_output').element.innertext = js.formaXml(sbml);
         </py-script>
         
  <div class="form-group purple-border">
