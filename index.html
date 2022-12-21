@@ -23,9 +23,8 @@ function copytoclipboard() {
 
 <body>
  
- <py-script src="mymult.py"> </py-script>
- <py-script src="lexer.py"> </py-script>
- <py-script src="infixtomathml.py"> </py-script>
+ <py-script src="myadd.py"> </py-script>
+ 
  
 <py-script>
 from js import alert
@@ -193,7 +192,7 @@ class antToSbml:
     </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here F:</h5>
+   <h5>Type your model here G:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    A + B -> C; k1*A*B
    C -> D; k2*C
@@ -209,7 +208,6 @@ class antToSbml:
 
          def getSBML():
              try:
-               x = mymult (2,3)
                antStr = Element('antimony').element.value                  
                m = antToSbml (antStr)
                sbml = m.getSBML()            
