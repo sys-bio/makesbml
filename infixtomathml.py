@@ -178,3 +178,149 @@ class InfixToMathML:
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
+    
+class antToSbml:
+    def __init__(self, antStr):
+        self.antStr = antStr
+    
+        self.reactions = []
+
+        self.header = '<?xml version="1.0" encoding="UTF-8"?>' + '\n' 
+        self.header += '<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">' + '\n'
+        self.header += '<model extentUnits="mole" timeUnits="second">' + '\n'
+        
+        self.trailer = '</model>' + '\n'
+        self.trailer += '</sbml>'
+
+        self.header += '<listOfUnitDefinitions>' + '\n'
+        self.header += '<unitDefinition id="per_second">' + '\n'
+        self.header += '<listOfUnits>' + '\n'
+        self.header += '<unit kind="second" exponent="-1" scale="0" multiplier="1"/>' + '\n'
+        self.header += '</listOfUnits>' + '\n'
+        self.header += '</unitDefinition>' + '\n'
+        self.header += '<unitDefinition id="litre_per_mole_second">' + '\n'
+        self.header += '<listOfUnits>' + '\n'
+        self.header += '<unit kind="mole" exponent="-1" scale="0" multiplier="1"/>' + '\n'
+        self.header += '<unit kind="litre" exponent="1" scale="0" multiplier="1"/>' + '\n'
+        self.header += '<unit kind="second" exponent="-1" scale="0" multiplier="1"/>' + '\n'
+        self.header += '</listOfUnits>' + '\n'
+        self.header += '</unitDefinition>' + '\n'
+        self.header += '</listOfUnitDefinitions>' + '\n'
+
+        self.compartment = '<listOfCompartments>' + '\n'
+        self.compartment += '<compartment id="comp" size="1" spatialDimensions="3" units="litre" constant="true"/>' + '\n'
+        self.compartment += '</listOfCompartments>' + '\n'
+
+        self.sbmlStr = self.header + self.compartment
+
+        self.speciesList = []
+        self.parameterList = []
+        
+    def addToSpeciesList(self, id):
+        if not (id in self.speciesList):
+           self.speciesList.append (id)
+        
+    def my_split(self, s, seps):
+        res = [s]
+        for sep in seps:
+            s, res = res, []
+            for seq in s:
+                res += seq.split(sep)
+        return res
+        
+    def makeSpecies (self, id):
+        astr = ''
+        astr = astr + '<species compartment="comp" '
+        astr = astr + "id=\"" + id + '\" '
+        astr += ' initialConcentration="1"'
+        astr += ' hasOnlySubstanc,eUnits="false" substanceUnits="mole"'
+        astr += ' constant="false" boundaryCondition="false"'
+        astr = astr + '/>' + '\n'
+        return astr
+
+    def getSBML(self):
+        lines = self.antStr.split(',')
+        for line in lines:
+            P1 = line.split (';')
+            P2 = P1[0].split ('->')
+            reactants = P2[0].split ('+')
+            products = P2[1].split ('+')
+    
+            expression = P1[1].strip()
+        
+            for idx, r in enumerate(reactants):
+                reactants[idx] = r.strip ()
+            for idx, r in enumerate(reactants):
+                if r[0].isdigit():
+                   reactants[idx] = r.split (' ')
+                else:
+                   reactants[idx] = [1, reactants[idx]]
+                self.addToSpeciesList (reactants[idx][1])
+           
+            for idx, r in enumerate(products):
+                products[idx] = r.strip ()
+            for idx, r in enumerate(products):
+                if r[0].isdigit():
+                   products[idx] = r.split (' ')
+                else:
+                   products[idx] = [1, products[idx]]
+                self.addToSpeciesList (products[idx][1])
+               
+            # Get the parameter list
+            terms = self.my_split(expression, '+/-*()')
+            for s in terms:
+                if not (s in self.speciesList):
+                    self.parameterList.append (s)
+    
+            #print (reactants)
+            #print (products)
+            #print (expression)
+            
+            self.reactions.append ([reactants, products, expression])
+    
+        self.sbmlStr += '<listOfSpecies>' + '\n'
+        astr = ''
+        for id in self.speciesList:
+            astr = astr + self.makeSpecies(id)
+            
+        self.sbmlStr += astr
+        self.sbmlStr += '</listOfSpecies>' + '\n'
+            
+        self.sbmlStr += '<listOfParameters>' + '\n'
+        for p in self.parameterList:
+            self.sbmlStr += '<parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/>' + '\n'
+             
+        self.sbmlStr += '</listOfParameters>' + '\n'
+            
+        self.sbmlStr += '<listOfReactions>' + '\n'
+            
+        astr = ''
+        for idx1, r in enumerate (self.reactions):
+            rid = 'J' + str (idx1)
+            astr = astr + '<reaction id="' + rid + '"'
+            astr = astr + ' reversible="true" fast="false">' + '\n'
+            astr = astr + '<listOfReactants>' + '\n'
+            for idx2, rt in enumerate (r[0]):
+                astr = astr + '<speciesReference species="'
+                astr = astr + rt[1] + '" stoichiometry="'
+                astr += str (rt[0]) + '" constant="true"/>' + '\n'   
+            astr = astr + '</listOfReactants>' + '\n' 
+                
+            astr = astr + '<listOfProducts>' + '\n'
+            for idx2, rt in enumerate (r[1]):
+                astr = astr + '<speciesReference species="'
+                astr = astr + rt[1] + '" stoichiometry="'
+                astr += str (rt[0]) + '" constant="true"/>' + '\n'   
+            astr = astr + '</listOfProducts>' + '\n'  
+            
+            astr += '<kineticLaw>' + '\n'
+            p = InfixToMathML(r[2])
+            astr += p.getMathML () + '\n'
+            astr += '</kineticLaw>' + '\n'
+            astr += '</reaction>' + '\n'
+            
+        self.sbmlStr += astr + '</listOfReactions>' + '\n'
+    
+        self.sbmlStr = self.sbmlStr + self.trailer
+        return self.sbmlStr
+
