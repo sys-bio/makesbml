@@ -3,6 +3,8 @@
 import sys
 import re
 
+debugPy = False
+
 def lex(characters, token_exprs):
     pos = 0
     tokens = []
@@ -181,7 +183,8 @@ class InfixToMathML:
     
 class antToSbml:
     def __init__(self, antStr):
-        print ('Entering antToSbml')
+        if debugPy:
+            print ('Entering antToSbml')
         self.antStr = antStr
     
         self.reactions = []
@@ -240,17 +243,18 @@ class antToSbml:
         return astr
 
     def getSBML(self):
-        print ('V.B')
+        print ('V.C')
         lines = self.antStr.split('\n')
-        #print (lines)
+        print (lines)
         for indx3, line in enumerate(lines):
             line = line.strip()
+            print ('line = ', line)
             # Separate reaction from kinetic law
             P1 = line.split (';')
-            #print ('P1 =', P1)
+            print ('P1 =', P1)
             if ':' in P1[0]:
                 rn = line.split(':')
-                #print ('rn = ', rn)
+                print ('rn = ', rn)
                 reactionId = rn[0].strip()
                 P1[0] = rn[1]
             else:
