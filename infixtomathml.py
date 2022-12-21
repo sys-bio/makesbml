@@ -181,6 +181,7 @@ class InfixToMathML:
     
 class antToSbml:
     def __init__(self, antStr):
+        print ('Entering antToSbml')
         self.antStr = antStr
     
         self.reactions = []
