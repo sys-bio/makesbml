@@ -301,32 +301,32 @@ class antToSbml:
 
                 self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
 
-                self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
+            self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
 
-                astr = ''
-                for idx1, r in enumerate (self.reactions):
-                    rid = 'J' + str (idx1)
-                    astr = astr + '&lt;reaction id="' + rid + '"'
-                    astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
-                    astr = astr + '&lt;listOfReactants>' + '\n'
-                    for idx2, rt in enumerate (r[0]):
-                        astr = astr + '&lt;speciesReference species="'
-                        astr = astr + rt[1] + '" stoichiometry="'
-                        astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-                    astr = astr + '&lt;/listOfReactants&gt;' + '\n' 
+             astr = ''
+             for idx1, r in enumerate (self.reactions):
+                 rid = 'J' + str (idx1)
+                 astr = astr + '&lt;reaction id="' + rid + '"'
+                 astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
+                 astr = astr + '&lt;listOfReactants>' + '\n'
+                 for idx2, rt in enumerate (r[0]):
+                     astr = astr + '&lt;speciesReference species="'
+                     astr = astr + rt[1] + '" stoichiometry="'
+                     astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
+                 astr = astr + '&lt;/listOfReactants&gt;' + '\n' 
 
-                    astr = astr + '&l;listOfProducts&gt;' + '\n'
-                    for idx2, rt in enumerate (r[1]):
-                        astr = astr + '&lt;speciesReference species="'
-                        astr = astr + rt[1] + '" stoichiometry="'
-                        astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
-                    astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
+                 astr = astr + '&l;listOfProducts&gt;' + '\n'
+                 for idx2, rt in enumerate (r[1]):
+                     astr = astr + '&lt;speciesReference species="'
+                     astr = astr + rt[1] + '" stoichiometry="'
+                     astr += str (rt[0]) + '" constant="true"/&gt;' + '\n'   
+                 astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
 
-                    astr += '&lt;kineticLaw&lt;' + '\n'
-                    p = InfixToMathML(r[2])
-                    astr += p.getMathML () + '\n'
-                    astr += '&lt;/kineticLaw&gt;' + '\n'
-                    astr += '&lt;/reaction&gt;' + '\n'
+                 astr += '&lt;kineticLaw&lt;' + '\n'
+                 p = InfixToMathML(r[2])
+                 astr += p.getMathML () + '\n'
+                 astr += '&lt;/kineticLaw&gt;' + '\n'
+                 astr += '&lt;/reaction&gt;' + '\n'
 
         self.sbmlStr += astr + '&lt;/listOfReactions&gt;' + '\n'
 
