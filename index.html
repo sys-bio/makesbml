@@ -204,8 +204,8 @@ class antToSbml:
     
         self.reactions = []
 
-        self.header = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;' + '&lt;br /&gt;' 
-        self.header += '&lt;sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1"&gt;' + '&lt;br /&gt;'
+        self.header = '&lt;?xml version="1.0" encoding="UTF-8"?&gt;' + '\n' 
+        self.header += '&lt;sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1"&gt;' + '\n'
         self.header += '&lt;model extentUnits="mole" timeUnits="second"&gt;' + '\n'
         
         self.trailer = '&lt;/model>' + '\n'
