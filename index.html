@@ -320,7 +320,7 @@ class antToSbml:
                     astr +=lstr (rt[0]) + '" constant="true"/&gt;' + '\n'   
                 astr = astr + '&lt;/listOfProducts&gt;' + '\n'  
 
-                astr += '&gt;kineticLaw&gt;' + '\n'
+                astr += '&lt;kineticLaw&gt;' + '\n'
                 p = InfixToMathML(r[2])
                 astr += p.getMathML ()
                 astr += '&lt;/kineticLaw&gt;' + '\n'
