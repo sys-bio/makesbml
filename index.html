@@ -363,7 +363,7 @@ class antToSbml:
              antStr = Element('antimony').element.value                  
              m = antToSbml (antStr)
              sbml = m.getSBML()
-             sbml = sbml.replace('\n', '<br>')
+             sbml = sbml.replace('\n', '<br />')
              Element('sbml_output').element.innerText = sbml
         </py-script>
         
