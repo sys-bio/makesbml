@@ -107,7 +107,6 @@ class Node:
     def traverseInOrder(self):
         if self.left:
             self.left.traverseInOrder()
-        print(self.val, end=' ')
         if self.right:
             self.right.traverseInOrder()
 
@@ -117,7 +116,6 @@ class Node:
             self.left.traversePostOrder()
         if self.right:
             self.right.traversePostOrder()
-        print(self.val, end=' ')
 
 class InfixToMathML:
     def __init__(self, infix):
@@ -160,7 +158,6 @@ class InfixToMathML:
                    
     def expression(self):
         n1 = self.term()
-        #print ('n1 = ', n1.val)
         while self.token[0] in ['+', '-']:
             op = self.token[0]
             self.nextToken()
@@ -246,11 +243,9 @@ class antToSbml:
 
     def getSBML(self):
         lines = self.antStr.split('\n');  
-        print ('lines = ', lines)
         for line in lines:
             line = line.replace("\n", " ")
             line = line.strip()
-            print ('line = ', line)
             if line != '':
                 P1 = line.split (';')
                 P2 = P1[0].split ('->')
@@ -282,7 +277,6 @@ class antToSbml:
                 for s in terms:
                     if not (s in self.speciesList):
                         self.parameterList.append (s)
-                        #print ('ps:', self.parameterList)
 
                 self.reactions.append ([reactants, products, expression])
  
@@ -352,11 +346,7 @@ class antToSbml:
             
       <py-script> 
          def sayHello():
-             antStr = Element('antimony').element.value
-             print(antStr)
-             print (myadd (2,3))
-                   
-             print ('Generate sbml:')
+             antStr = Element('antimony').element.value                  
              m = antToSbml (antStr)
              Element('sbml_output').element.innerText = m.getSBML()
         </py-script>
