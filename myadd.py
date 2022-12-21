@@ -1,2 +1,2 @@
-def myadd (a,b)
+def myadd (a,b):
     return a + b
