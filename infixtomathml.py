@@ -240,8 +240,8 @@ class antToSbml:
 
     def getSBML(self):
         print ('V.A')
-        print ('lines = ', lines)
         lines = self.antStr.split('\n')
+        print ('lines = ', lines)
         for line in lines:
             line = line.split ()
             print ('line after split = ', line)
