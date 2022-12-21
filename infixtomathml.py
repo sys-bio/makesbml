@@ -233,20 +233,20 @@ class antToSbml:
         astr = astr + '<species compartment="comp" '
         astr = astr + "id=\"" + id + '\" '
         astr += ' initialConcentration="1"'
-        astr += ' hasOnlySubstanc,eUnits="false" substanceUnits="mole"'
+        astr += ' hasOnlySubstanceUnits="false" substanceUnits="mole"'
         astr += ' constant="false" boundaryCondition="false"'
         astr = astr + '/>' + '\n'
         return astr
 
     def getSBML(self):
-        print ('V.A')
+        #print ('V.A')
         lines = self.antStr.split('\n')
-        print ('lines = ', lines)
+        #print ('lines = ', lines)
         for line in lines:
             line = line.strip ()
-            print ('line after strip = ', line)
+            #print ('line after strip = ', line)
             if line != '':
-                print ('line = ', line)
+                #print ('line = ', line)
                 P1 = line.split (';')
                 P2 = P1[0].split ('->')
                 reactants = P2[0].split ('+')
@@ -278,9 +278,9 @@ class antToSbml:
                     if not (s in self.speciesList):
                         self.parameterList.append (s)
 
-                print (reactants)
-                print (products)
-                print (expression)
+                #print (reactants)
+                #print (products)
+                #print (expression)
 
                 self.reactions.append ([reactants, products, expression])
     
