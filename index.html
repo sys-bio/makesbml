@@ -319,7 +319,7 @@ class antToSbml:
                 rid = 'J' + str (idx1)
                 astr = astr + '&lt;reaction id="' + rid + '"'
                 astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
-                astr = astr + '&lt;listOfReactants>' + '\n'
+                astr = astr + '&lt;listOfReactants&gt;' + '\n'
                 for idx2, rt in enumerate (r[0]):
                     astr = astr + '&lt;speciesReference species="'
                     astr = astr + rt[1] + '" stoichiometry="'
@@ -352,8 +352,8 @@ class antToSbml:
  <div class="form-group purple-border">
    <h5>Type your model here:</h5>
   <textarea class="form-control" id="antimony" rows="8">
-   A -> B; k1*A
-   B -> C; k2*B
+   A + B -> C; k1*A*B
+   C -> D; k2*C
   </textarea>
 </div>       
                                                                                                                             
