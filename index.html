@@ -198,7 +198,7 @@ class InfixToMathML:
         tree = self.parse ()
         mathml = '&lt;math xmlns="http://www.w3.org/1998/Math/MathML"&gt;' + '\n'
         m = tree.traversePreOrder()
-        mathml += m + '\n' + '</math>'
+        mathml += m + '\n' + '&lt;/math&gt;'
         return mathml
  
 class antToSbml:
@@ -350,7 +350,7 @@ class antToSbml:
     </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here:</h5>
+   <h5>Type your model here X:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    A + B -> C; k1*A*B
    C -> D; k2*C
