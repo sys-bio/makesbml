@@ -243,43 +243,46 @@ class antToSbml:
         return lines
         lines = self.antStr.split('\n')
         for line in lines:
-            print ('line = ', line)
-            P1 = line.split (';')
-            P2 = P1[0].split ('->')
-            reactants = P2[0].split ('+')
-            products = P2[1].split ('+')
-    
-            expression = P1[1].strip()
+            line = line.split ()
+            print ('line after split = ', line)
+            if line != '':
+                print ('line = ', line)
+                P1 = line.split (';')
+                P2 = P1[0].split ('->')
+                reactants = P2[0].split ('+')
+                products = P2[1].split ('+')
+
+                expression = P1[1].strip()
         
-            for idx, r in enumerate(reactants):
-                reactants[idx] = r.strip ()
-            for idx, r in enumerate(reactants):
-                if r[0].isdigit():
-                   reactants[idx] = r.split (' ')
-                else:
-                   reactants[idx] = [1, reactants[idx]]
-                self.addToSpeciesList (reactants[idx][1])
-           
-            for idx, r in enumerate(products):
-                products[idx] = r.strip ()
-            for idx, r in enumerate(products):
-                if r[0].isdigit():
-                   products[idx] = r.split (' ')
-                else:
-                   products[idx] = [1, products[idx]]
-                self.addToSpeciesList (products[idx][1])
+                for idx, r in enumerate(reactants):
+                    reactants[idx] = r.strip ()
+                for idx, r in enumerate(reactants):
+                    if r[0].isdigit():
+                       reactants[idx] = r.split (' ')
+                    else:
+                       reactants[idx] = [1, reactants[idx]]
+                    self.addToSpeciesList (reactants[idx][1])
+
+                for idx, r in enumerate(products):
+                    products[idx] = r.strip ()
+                for idx, r in enumerate(products):
+                    if r[0].isdigit():
+                       products[idx] = r.split (' ')
+                    else:
+                       products[idx] = [1, products[idx]]
+                    self.addToSpeciesList (products[idx][1])
                
-            # Get the parameter list
-            terms = self.my_split(expression, '+/-*()')
-            for s in terms:
-                if not (s in self.speciesList):
-                    self.parameterList.append (s)
-    
-            print (reactants)
-            print (products)
-            print (expression)
-            
-            self.reactions.append ([reactants, products, expression])
+                # Get the parameter list
+                terms = self.my_split(expression, '+/-*()')
+                for s in terms:
+                    if not (s in self.speciesList):
+                        self.parameterList.append (s)
+
+                print (reactants)
+                print (products)
+                print (expression)
+
+                self.reactions.append ([reactants, products, expression])
     
         self.sbmlStr += '<listOfSpecies>' + '\n'
         astr = ''
