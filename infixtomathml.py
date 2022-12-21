@@ -241,6 +241,7 @@ class antToSbml:
     def getSBML(self):
         lines = self.antStr.split('\n')
         for line in lines:
+            print ('line = ', line)
             P1 = line.split (';')
             P2 = P1[0].split ('->')
             reactants = P2[0].split ('+')
@@ -272,9 +273,9 @@ class antToSbml:
                 if not (s in self.speciesList):
                     self.parameterList.append (s)
     
-            #print (reactants)
-            #print (products)
-            #print (expression)
+            print (reactants)
+            print (products)
+            print (expression)
             
             self.reactions.append ([reactants, products, expression])
     
