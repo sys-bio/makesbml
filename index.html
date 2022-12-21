@@ -277,7 +277,7 @@ class antToSbml:
                     self.addToSpeciesList (products[idx][1])
 
                 # Get the parameter list
-                terms = self.my_split(expression, '+/-*')
+                terms = self.my_split(expression, '+/-*()')
                 for s in terms:
                     if not (s in self.speciesList):
                         self.parameterList.append (s)
@@ -285,19 +285,18 @@ class antToSbml:
 
                 self.reactions.append ([reactants, products, expression])
  
-                self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
-                astr = ''
-                for id in self.speciesList:
-                    astr = astr + self.makeSpecies(id)
+        self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
+        astr = ''
+        for id in self.speciesList:
+             astr = astr + self.makeSpecies(id)
 
-                self.sbmlStr += astr
-                self.sbmlStr += '&lt;/listOfSpecies&gt;' + '\n'
+        self.sbmlStr += astr
+        self.sbmlStr += '&lt;/listOfSpecies&gt;' + '\n'
 
-                self.sbmlStr += '&lt;listOfParameters&gt;' + '\n'
-                for p in self.parameterList:
-                    self.sbmlStr += '&lt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
-
-                self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
+        self.sbmlStr += '&lt;listOfParameters&gt;' + '\n'
+        for p in self.parameterList:
+            self.sbmlStr += '&lt;parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/&gt;' + '\n'
+        self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
 
         self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
 
