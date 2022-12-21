@@ -9,7 +9,17 @@
 <script>
 function copy() {
   alert("COPY......")
-  navigator.clipboard.writeText($('sbml_output').val());
+ var copyText = document.getElementById("sbml_output");
+
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  alert("Copied the text);
 }
 </script>
     
@@ -335,9 +345,7 @@ class antToSbml:
 </py-script>
     
     <py-config>
-    </py-config>
-    
-    <h1 id="msg">   
+    </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
    <h5>Type your model here:</h5>
@@ -365,6 +373,5 @@ class antToSbml:
                                                                                          
 <button class = "btn btn-primary" id="CopyToClipboard" onclick="copy()">Copy to Clipboard Me</button>
         
-    </h1>
 </body>
 
