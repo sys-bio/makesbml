@@ -8,7 +8,7 @@
 <body>
 <script>
 function copy() {
-  let textarea = document.getElementById("sbml-output");
+  let textarea = document.getElementById("sbml_output");
   textarea.select();
   document.execCommand("copy");
 }
@@ -360,7 +360,7 @@ class antToSbml:
         </py-script>
         
  <div class="form-group purple-border">
-  <textarea class="form-control" id="sbml_output" rows="16">
+  <textarea class="form-control" id="sbml_output" style="white-space: pre-wrap; rows="20">
   </textarea>
 </div>
         
