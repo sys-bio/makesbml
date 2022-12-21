@@ -24,8 +24,18 @@ function copytoclipboard() {
 <body>
  
 <py-script>
-def myadd (a,b):
-    return a + b
+from js import alert
+def errorHandler(e):
+        exception_type, exception_object, exception_traceback = sys.exc_info()
+        filename = exception_traceback.tb_frame.f_code.co_filename
+        lineno = exception_traceback.tb_lineno
+ 
+        msg  = 'Exception Type: ' + str(exception_type) + '\n'
+        msg += 'File: ' + filename + '\n'
+        msg += 'Line: ' + str(lineno) + '\n'
+        msg += 'Error: ' + str(e)
+
+        alert(msg)
         
 import sys
 import re
@@ -351,7 +361,7 @@ class antToSbml:
     </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here X:</h5>
+   <h5>Type your model here Y:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    A + B -> C; k1*A*B
    C -> D; k2*C
@@ -366,10 +376,13 @@ class antToSbml:
          import js
 
          def getSBML():
-             antStr = Element('antimony').element.value                  
-             m = antToSbml (antStr)
-             sbml = m.getSBML()            
-             Element('sbml_output').element.value = sbml;
+             try:
+               antStr = Element('antimony').element.value                  
+               m = antToSbml (antStr)
+               sbml = m.getSBML()            
+               Element('sbml_output').element.value = sbml;
+             except Exception as e:
+               errorHandler(e)
         </py-script>
         
  <div class="form-group purple-border">
