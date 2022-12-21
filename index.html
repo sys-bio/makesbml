@@ -283,10 +283,8 @@ class antToSbml:
                         self.parameterList.append (s)
                         #print ('ps:', self.parameterList)
 
-                #print (reactants)
-                #print (products)
-                #print (expression)
-
+                self.reactions.append ([reactants, products, expression])
+ 
                 self.sbmlStr += '&lt;listOfSpecies&gt;' + '\n'
                 astr = ''
                 for id in self.speciesList:
