@@ -1,4 +1,4 @@
-from lexer import *
+from imp_lex import *
 
 # Binary Tree in Python
 
