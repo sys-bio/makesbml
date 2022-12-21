@@ -57,6 +57,6 @@ token_exprs = [
     (r'[A-Za-z][A-Za-z0-9_]*', ID),
 ]
 
-def lexer(characters):
+def call_lexer(characters):
     return lex(characters, token_exprs)
 
