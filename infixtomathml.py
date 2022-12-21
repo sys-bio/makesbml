@@ -239,6 +239,7 @@ class antToSbml:
         return astr
 
     def getSBML(self):
+        print ('V.B')
         lines = self.antStr.split('\n')
         #print (lines)
         for indx3, line in enumerate(lines):
