@@ -64,6 +64,7 @@ token_exprs = [
 def call_lexer(characters):
     return lex(characters, token_exprs)
 
+functionList = ['sin', 'cos']
 
 # Binary Tree in Python
 
@@ -321,7 +322,8 @@ class antToSbml:
             
         astr = ''
         for idx1, r in enumerate (self.reactions):
-            print ('r = ', r)
+            if debugPy:
+               print ('r = ', r)
             rid = 'J' + str (idx1)
             astr = astr + '<reaction id="' + r['reactionId'] + '"'
             astr = astr + ' reversible="true" fast="false">' + '\n'
