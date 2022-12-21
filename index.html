@@ -399,7 +399,7 @@ class antToSbml:
              antStr = Element('antimony').element.value                  
              m = antToSbml (antStr)
              sbml = m.getSBML()            
-             Element('sbml_output').element.innertext = js.formaXml(sbml);
+             Element('sbml_output').element.innertext = js.formatXml(sbml);
         </py-script>
         
  <div class="form-group purple-border">
