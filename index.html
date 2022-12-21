@@ -301,10 +301,10 @@ class antToSbml:
 
                 self.sbmlStr += '&lt;/listOfParameters&gt;' + '\n'
 
-            self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
+        self.sbmlStr += '&lt;listOfReactions&gt;' + '\n'
 
-            astr = ''
-            for idx1, r in enumerate (self.reactions):
+        astr = ''
+        for idx1, r in enumerate (self.reactions):
                 rid = 'J' + str (idx1)
                 astr = astr + '&lt;reaction id="' + rid + '"'
                 astr = astr + ' reversible="true" fast="false"&gt;' + '\n'
