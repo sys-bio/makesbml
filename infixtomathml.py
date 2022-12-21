@@ -243,8 +243,8 @@ class antToSbml:
         lines = self.antStr.split('\n')
         print ('lines = ', lines)
         for line in lines:
-            line = line.split ()
-            print ('line after split = ', line)
+            line = line.strip ()
+            print ('line after strip = ', line)
             if line != '':
                 print ('line = ', line)
                 P1 = line.split (';')
