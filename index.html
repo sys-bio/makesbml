@@ -8,9 +8,7 @@
 <body>
 <script>
 function copy() {
-  let textarea = document.getElementById("sbml_output");
-  textarea.select();
-  document.execCommand("copy");
+  navigator.clipboard.writeText($('sbml_output').val());
 }
 </script>
     
