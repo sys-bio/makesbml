@@ -56,7 +56,7 @@ class InfixToMathML:
     def __init__(self, infix):
         self.tokenPtr = 0
         self.token = None
-        self.tokens = lexer(infix)
+        self.tokens = call_lexer(infix)
         
     def nextToken(self):
         if self.tokenPtr >= len (self.tokens):
