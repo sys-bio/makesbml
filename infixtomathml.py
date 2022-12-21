@@ -239,6 +239,8 @@ class antToSbml:
         return astr
 
     def getSBML(self):
+        print ('lines = ', lines)
+        return lines
         lines = self.antStr.split('\n')
         for line in lines:
             print ('line = ', line)
