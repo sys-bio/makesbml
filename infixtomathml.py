@@ -4,7 +4,7 @@
 import sys
 import re
 
-debugPy = False
+debugPy = True
 
 def lex(characters, token_exprs):
     pos = 0
@@ -336,10 +336,13 @@ class antToSbml:
     def getSBML(self):
         lines = self.antStr.split('\n')
         if debugPy:
-           print (lines)
+           print ('V.A') 
+           print ('lines = ', lines)
         parameterList = []     
         for indx3, line in enumerate(lines):
             line = line.strip()
+            if debugPy:
+               print ('line = ', line) 
             if line != '':
                 # Separate reaction from kinetic law
                 P1 = line.split (';')
@@ -357,7 +360,9 @@ class antToSbml:
                 reactants = P2[0].split ('+')
                 products = P2[1].split ('+')
                 
-                print ('reactants = ', reactants)
+                if debugPy:
+                   print ('reactants = ', reactants)
+                   print ('products = ', products)
         
                 expression = P1[1].strip()
                 expression = P1[1].replace (' ', '')
@@ -410,9 +415,10 @@ class antToSbml:
                                  if not (s in functionList):
                                     parameterList.append (s)
                                                                            
-                print (reactants)
-                print (products)
-                print (expression)
+                if debugPy:
+                   print (reactants)
+                   print (products)
+                   print (expression)
                 
                 self.reactions.append ({'reactionId': reactionId, 
                                         'reactants' : reactants, 
