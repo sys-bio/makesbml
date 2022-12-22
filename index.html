@@ -18,15 +18,13 @@ function copytoclipboard() {
 
 </script>
   
-  
 </head>
 
 <body>
  
- <py-script src="myadd.py"> </py-script>
- <py-script src="infixtomathml.py"> </py-script>
- 
- 
+<py-script src="myadd.py"> </py-script>
+<py-script src="infixtomathml.py"> </py-script>
+  
 <py-script>
 from js import alert
 import sys
@@ -44,22 +42,19 @@ def errorHandler(e):
         alert(msg)
        
 </py-script>
-    
-    <py-config>
-      packages = [
-       "lxml"
-      ]
-    </py-config>  
+   
+<py-config>
+</py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here P:</h5>
+   <h5>Type your model here Q:</h5>
   <textarea class="form-control" id="antimony" rows="8">
-   A + B -> C; k1*A*B
-   C -> D; k2*C
+   J2: 2 A + B -> C; k1*A*B
+   ABC: C -> $D; k2*C^6
   </textarea>
 </div>       
                                                                                                                             
-      <button id="ClickMe" class = "btn btn-primary" py-click="getSBML()">Generate SBML</button> 
+<button id="ClickMe" class = "btn btn-primary" py-click="getSBML()">Generate SBML</button> 
 
       <h5>The SBML is:</h5>
             
