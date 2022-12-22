@@ -1,6 +1,7 @@
 # Created on Mon Dec 19 13:25:22 2022
 # author: hsauro
 
+
 import sys
 import re
 
@@ -274,6 +275,16 @@ class InfixToMathML:
 def createSpecies (id, boundary, value):
     return {'id': id, 'boundary': boundary, 'value': value}
     
+def splitNumWord(s):
+    tail = s.lstrip('0123456789')
+    tail = tail.strip()
+    head = s[:len(s)-len(tail)]
+    head = head.strip()
+    if head == '':
+       return '1', tail
+    else:
+       return head, tail
+
 class antToSbml:
     def __init__(self, antStr):
         self.antStr = antStr
@@ -313,7 +324,8 @@ class antToSbml:
         
     def addToSpeciesList(self, species):
         if not (species[1] in self.speciesList):
-           self.speciesList.append (createSpecies(species[1], species[2], 0.0))
+            print ('species = ', species)
+            self.speciesList.append (createSpecies(species[1], species[2], 0.0))
         
     def my_split(self, s, seps):
         res = [s]
@@ -336,13 +348,10 @@ class antToSbml:
     def getSBML(self):
         lines = self.antStr.split('\n')
         if debugPy:
-           print ('V.A') 
-           print ('lines = ', lines)
+           print (lines)
         parameterList = []     
         for indx3, line in enumerate(lines):
             line = line.strip()
-            if debugPy:
-               print ('line = ', line) 
             if line != '':
                 # Separate reaction from kinetic law
                 P1 = line.split (';')
@@ -350,7 +359,6 @@ class antToSbml:
                    print ('P1 =', P1)
                 if ':' in P1[0]:
                     rn = line.split(':')
-                    #print ('rn = ', rn)
                     reactionId = rn[0].strip()
                     P1[0] = rn[1]
                 else:
@@ -361,8 +369,8 @@ class antToSbml:
                 products = P2[1].split ('+')
                 
                 if debugPy:
-                   print ('reactants = ', reactants)
-                   print ('products = ', products)
+                    print ('reactants = ', reactants)
+                    print ('products = ', products)
         
                 expression = P1[1].strip()
                 expression = P1[1].replace (' ', '')
@@ -373,10 +381,9 @@ class antToSbml:
                     
                 # reactants = [stoich, id, boudarycondition]
                 for idx, r in enumerate(reactants):
-                    if r[0].isdigit():
-                       reactants[idx] = r.split (' ')
-                    else:
-                       reactants[idx] = [1, reactants[idx], False]
+                    print ('r = ', r)
+                    nw = splitNumWord (r)
+                    reactants[idx] = [nw[0], nw[1], False]
                     # Check for boundary condition
                     if reactants[idx][1][0] == '$':
                         reactants[idx][2] = True
@@ -389,10 +396,9 @@ class antToSbml:
                     products[idx] = r.strip ()
                     
                 for idx, r in enumerate(products):
-                    if r[0].isdigit():
-                       products[idx] = r.split (' ')
-                    else:
-                       products[idx] = [1, products[idx], False]
+                    nw = splitNumWord (r)
+                    print ('nw = ', nw)
+                    products[idx] = [nw[0], nw[1], False]
                     # Check for boundary condition
                     if products[idx][1][0] == '$':
                         products[idx][2] = True
@@ -415,10 +421,9 @@ class antToSbml:
                                  if not (s in functionList):
                                     parameterList.append (s)
                                                                            
-                if debugPy:
-                   print (reactants)
-                   print (products)
-                   print (expression)
+                print (reactants)
+                print (products)
+                print (expression)
                 
                 self.reactions.append ({'reactionId': reactionId, 
                                         'reactants' : reactants, 
@@ -511,6 +516,3 @@ class antToSbml:
     
         self.sbmlStr = self.sbmlStr + self.trailer
         return self.sbmlStr
-
-
-   
