@@ -4,7 +4,7 @@
 import sys
 import re
 
-debugPy = True
+debugPy = False
 
 def lex(characters, token_exprs):
     pos = 0
