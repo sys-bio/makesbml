@@ -1,7 +1,6 @@
 # Created on Mon Dec 19 13:25:22 2022
 # author: hsauro
 
-
 import sys
 import re
 
@@ -86,7 +85,8 @@ class Node:
     def traversePreOrder(self):
         mathml = ''
         
-        print(self.val, end=' ')
+        if debugPy:
+           print(self.val, end=' ')
         
         if self.val in functionList:
            mathml += '<apply> <' + self.val + '/>'
@@ -234,7 +234,6 @@ class InfixToMathML:
                    
     def expression(self):
         n1 = self.term()
-        #print ('n1 = ', n1.val)
         while self.token[0] in ['+', '-']:
             op = self.token[0]
             self.nextToken()
@@ -275,6 +274,8 @@ class InfixToMathML:
 def createSpecies (id, boundary, value):
     return {'id': id, 'boundary': boundary, 'value': value}
     
+# Split string into num, word
+# If no num present then splits into 1, word
 def splitNumWord(s):
     tail = s.lstrip('0123456789')
     tail = tail.strip()
@@ -320,11 +321,9 @@ class antToSbml:
         self.sbmlStr = self.header + self.compartment
 
         self.speciesList = []
-        #self.parameterList = []
         
     def addToSpeciesList(self, species):
         if not (species[1] in self.speciesList):
-            print ('species = ', species)
             self.speciesList.append (createSpecies(species[1], species[2], 0.0))
         
     def my_split(self, s, seps):
@@ -348,10 +347,12 @@ class antToSbml:
     def getSBML(self):
         lines = self.antStr.split('\n')
         if debugPy:
-           print (lines)
+           print ('lines =', lines)
         parameterList = []     
         for indx3, line in enumerate(lines):
             line = line.strip()
+            if debugPy:
+               print ('line =', line) 
             if line != '':
                 # Separate reaction from kinetic law
                 P1 = line.split (';')
@@ -369,8 +370,8 @@ class antToSbml:
                 products = P2[1].split ('+')
                 
                 if debugPy:
-                    print ('reactants = ', reactants)
-                    print ('products = ', products)
+                    print ('reactants =', reactants)
+                    print ('products =', products)
         
                 expression = P1[1].strip()
                 expression = P1[1].replace (' ', '')
@@ -381,7 +382,6 @@ class antToSbml:
                     
                 # reactants = [stoich, id, boudarycondition]
                 for idx, r in enumerate(reactants):
-                    print ('r = ', r)
                     nw = splitNumWord (r)
                     reactants[idx] = [nw[0], nw[1], False]
                     # Check for boundary condition
@@ -397,7 +397,6 @@ class antToSbml:
                     
                 for idx, r in enumerate(products):
                     nw = splitNumWord (r)
-                    print ('nw = ', nw)
                     products[idx] = [nw[0], nw[1], False]
                     # Check for boundary condition
                     if products[idx][1][0] == '$':
@@ -421,9 +420,10 @@ class antToSbml:
                                  if not (s in functionList):
                                     parameterList.append (s)
                                                                            
-                print (reactants)
-                print (products)
-                print (expression)
+                if debugPy:
+                   print (reactants)
+                   print (products)
+                   print (expression)
                 
                 self.reactions.append ({'reactionId': reactionId, 
                                         'reactants' : reactants, 
@@ -431,12 +431,13 @@ class antToSbml:
                                         'expression': expression,
                                         'parameterList': parameterList})
     
-        print ('sp list = ', self.speciesList)
-        print ('parameter list = ', parameterList)
+        if debugPy:
+           print ('sp list = ', self.speciesList)
+           print ('parameter list = ', parameterList)
+           
         self.sbmlStr += '<listOfSpecies>' + '\n'
         astr = ''
         for species in self.speciesList:
-            print ('sp = ', species)
             astr = astr + self.makeSpecies(species)
             
         self.sbmlStr += astr
@@ -449,10 +450,8 @@ class antToSbml:
         self.sbmlStr += '</listOfParameters>' + '\n'
             
         self.sbmlStr += '<listOfReactions>' + '\n'
-            
         astr = ''
         for idx1, r in enumerate (self.reactions):
-            #print ('r = ', r)
             rid = 'J' + str (idx1)
             astr = astr + '<reaction id="' + r['reactionId'] + '"'
             astr = astr + ' reversible="true" fast="false">' + '\n'
@@ -483,7 +482,7 @@ class antToSbml:
             
             localSymbols = []
             symbols = self.my_split(r['expression'], '+/-*()^')
-            # List of spedies only found in kinetic law
+            # List of species only found in kinetic law
             for s in symbols:
                 if s != '':
                    if not s[0].isdigit():
