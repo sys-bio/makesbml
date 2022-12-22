@@ -1,4 +1,5 @@
-
+# Created on Mon Dec 19 13:25:22 2022
+# author: hsauro
 
 import sys
 import re
@@ -28,7 +29,7 @@ def lex(characters, token_exprs):
     return tokens
 
 RESERVED = 'RESERVED'
-INT      = 'INT'
+FLOAT    = 'FLOAT'
 ID       = 'ID'
 
 token_exprs = [
@@ -48,36 +49,64 @@ token_exprs = [
     (r'>',                     RESERVED),
     (r'!=',                    RESERVED),
     (r'=',                     RESERVED),
+    (r'\^',                    RESERVED),
     (r'and',                   RESERVED),
     (r'or',                    RESERVED),
     (r'not',                   RESERVED),
-    (r'if',                    RESERVED),
-    (r'then',                  RESERVED),
-    (r'else',                  RESERVED),
-    (r'while',                 RESERVED),
-    (r'do',                    RESERVED),
     (r'end',                   RESERVED),
-    (r'[0-9]+',                INT),
+    (r'[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?',  FLOAT),
+    #(r'[0-9]+',                INT),
     (r'[A-Za-z][A-Za-z0-9_]*', ID),
 ]
 
-def call_lexer(characters):
+def lexer(characters):
     return lex(characters, token_exprs)
 
 functionList = ['sin', 'cos']
+        
 
 # Binary Tree in Python
 
+INT_TYPE = 0
+FLOAT_TYPE = 1
+STRING_TYPE = 2
+OP_TYPE = 3
+
 class Node:
-    def __init__(self, key):
-        self.left = None
-        self.right = None
+    def __init__(self, key, nodeType=OP_TYPE, left=None, right=None):
+        self.left = left
+        self.right = right
         self.val = key
-        #self.mathml = ''
+        self.nodeType = nodeType
+        self.intValue = '0'
+        self.floatValue = '0.0'
 
     # Traverse preorder
     def traversePreOrder(self):
         mathml = ''
+        
+        print(self.val, end=' ')
+        
+        if self.val in functionList:
+           mathml += '<apply> <' + self.val + '/>'
+           mathml += self.left.traversePreOrder()
+           mathml += '</apply>'
+           return mathml
+       
+        # if self.nodeType == INT_TYPE:
+        #    mathml = '<cn type="integer"> ' + self.val + ' </cn>'
+        #    return mathml
+        
+        if self.nodeType == FLOAT_TYPE:
+           mathml = '<cn> ' + self.val + ' </cn>'
+           return mathml
+       
+        if self.val == 'u':
+           mathml += '<apply> <minus/>'  
+           mathml += self.left.traversePreOrder()
+           mathml += '</apply>'          
+           return mathml        
+                  
         if self.val == '+':
            mathml += '<apply> <plus/>' 
         if self.val == '-':
@@ -86,17 +115,18 @@ class Node:
            mathml += '<apply> <times/>' 
         if self.val == '/':
            mathml += '<apply> <divide/>' 
-           
-        if not (self.val in ['+', '-', '*', '/']):
-           mathml = mathml + '<ci>' + self.val + '</ci>'
-            
-        print(self.val, end=' ')
-        
+        if self.val == '^':
+           mathml += '<apply> <power/>' 
+       
+        if not (self.val in ['+', '-', '*', '/', '^']):
+           mathml += '<ci>' + self.val + '</ci>'
+                            
         if self.left:
             mathml += self.left.traversePreOrder()
         if self.right:
             mathml += self.right.traversePreOrder()
-        if self.val in ['+', '-', '*', '/']:
+            
+        if self.val in ['+', '-', '*', '/', '^']:
            mathml += '</apply>'
         return mathml
 
@@ -120,7 +150,7 @@ class InfixToMathML:
     def __init__(self, infix):
         self.tokenPtr = 0
         self.token = None
-        self.tokens = call_lexer(infix)
+        self.tokens = lexer(infix)
         
     def nextToken(self):
         if self.tokenPtr >= len (self.tokens):
@@ -131,9 +161,24 @@ class InfixToMathML:
     
     def factor (self):
         if self.token[1] == 'ID':
-            n = Node(self.token[0])
+            if self.token[0] in functionList:
+               fnName = self.token[0]
+               self.nextToken()
+               if self.token[0] == '(':
+                  self.nextToken()
+                  fn = self.expression()
+                  if self.token[0] != ')':
+                    raise Exception ('Expecting right parenthesis for start of function call')
+                  #self.nextToken() 
+                  n = Node (fnName)
+                  n.left = fn
+               else:
+                   raise Exception ('Expecting left parenthesis for start of function call')
+            else:
+               n = Node(self.token[0])
             self.nextToken()
             return n
+        
         if self.token[0] == '(':
             self.nextToken()
             n = self.expression()
@@ -142,13 +187,44 @@ class InfixToMathML:
                 raise Exception ('Missing right parenthesis')
             self.nextToken()
             return n
+        
+        # if self.token[1] == INT:
+        #    n = Node (self.token[0], INT_TYPE) 
+        #    self.nextToken()
+        #    return n
 
+        if self.token[1] == FLOAT:
+           n = Node (self.token[0], nodeType=FLOAT_TYPE) 
+           self.nextToken()
+           return n
+       
+    def power (self):
+        asign = 1
+        unaryCount = 0
+        while (self.token[0] == '-') or (self.token[0] == '+'):
+            if self.token[0] == '-':
+               asign = -1*asign
+               unaryCount = unaryCount + 1
+            self.nextToken()
+        
+        leftNode = self.factor()
+        powerNode = None
+        if self.token[0] == '^':
+           self.nextToken()            
+           rightNode = self.power()
+           leftNode = Node ('^', left=leftNode, right=rightNode)
+
+        if unaryCount > 0:              
+           leftNode = Node ('u', left=leftNode) 
+           
+        return leftNode          
+        
     def term (self):
-        n1 = self.factor()
+        n1 = self.power()
         while self.token[0] in ['*', '/']:
             op = self.token[0]
             self.nextToken()
-            n2 = self.factor()
+            n2 = self.power()
             n3 = Node (op)   
             n3.left = n1
             n3.right = n2
@@ -165,7 +241,9 @@ class InfixToMathML:
             n3 = Node (op)   
             n3.left = n1
             n3.right = n2
-            n1 = n3      
+            n1 = n3     
+        if self.token[0] == '(':
+            raise Exception('Unrecognised function call')
         return n1
         
     def stmt (self):
@@ -181,11 +259,23 @@ class InfixToMathML:
         m = tree.traversePreOrder()
         mathml += m + '\n' + '</math>'
         return mathml
+
+# p = InfixToMathML('Vm*S1^n/(Km + S1)^n')
+
+# print ('Parsing')
+# try:   
+#   mathml = p.getMathML ()
+# except Exception as e:
+#   print (e)  
+      
+# print()
+# print (mathml)
+
+def createSpecies (id, boundary, value):
+    return {'id': id, 'boundary': boundary, 'value': value}
     
 class antToSbml:
     def __init__(self, antStr):
-        if debugPy:
-            print ('Entering antToSbml')
         self.antStr = antStr
     
         self.reactions = []
@@ -219,11 +309,11 @@ class antToSbml:
         self.sbmlStr = self.header + self.compartment
 
         self.speciesList = []
-        self.parameterList = []
+        #self.parameterList = []
         
-    def addToSpeciesList(self, id):
-        if not (id in self.speciesList):
-           self.speciesList.append (id)
+    def addToSpeciesList(self, species):
+        if not (species[1] in self.speciesList):
+           self.speciesList.append (createSpecies(species[1], species[2], 0.0))
         
     def my_split(self, s, seps):
         res = [s]
@@ -233,87 +323,116 @@ class antToSbml:
                 res += seq.split(sep)
         return res
         
-    def makeSpecies (self, id):
+    def makeSpecies (self, species):
         astr = ''
         astr = astr + '<species compartment="comp" '
-        astr = astr + "id=\"" + id + '\" '
-        astr += ' initialConcentration="1"'
+        astr = astr + "id=\"" + species['id'] + '\" '
+        astr += ' initialConcentration="' + str (species['value']) + '"'
         astr += ' hasOnlySubstanceUnits="false" substanceUnits="mole"'
-        astr += ' constant="false" boundaryCondition="false"'
+        astr += ' constant="false" boundaryCondition="' + str (species['boundary']).lower() + '"'
         astr = astr + '/>' + '\n'
         return astr
 
     def getSBML(self):
-        #print ('V.D')
         lines = self.antStr.split('\n')
-        #print (lines)
+        if debugPy:
+           print (lines)
+        parameterList = []     
         for indx3, line in enumerate(lines):
             line = line.strip()
             if line != '':
-                if debugPy:
-                   print ('line = ', line)
                 # Separate reaction from kinetic law
                 P1 = line.split (';')
                 if debugPy:
                    print ('P1 =', P1)
                 if ':' in P1[0]:
                     rn = line.split(':')
-                    if debugPy:
-                       print ('rn = ', rn)
+                    #print ('rn = ', rn)
                     reactionId = rn[0].strip()
                     P1[0] = rn[1]
                 else:
                     reactionId = '_J' + str (indx3)
-                
+                    
                 P2 = P1[0].split ('->')
                 reactants = P2[0].split ('+')
                 products = P2[1].split ('+')
-
-                expression = P1[1].strip()
+                
+                print ('reactants = ', reactants)
         
+                expression = P1[1].strip()
+                expression = P1[1].replace (' ', '')
+            
+                # Strip any spaces from reactants list
                 for idx, r in enumerate(reactants):
                     reactants[idx] = r.strip ()
+                    
+                # reactants = [stoich, id, boudarycondition]
                 for idx, r in enumerate(reactants):
                     if r[0].isdigit():
                        reactants[idx] = r.split (' ')
                     else:
-                       reactants[idx] = [1, reactants[idx]]
-                    self.addToSpeciesList (reactants[idx][1])
-           
+                       reactants[idx] = [1, reactants[idx], False]
+                    # Check for boundary condition
+                    if reactants[idx][1][0] == '$':
+                        reactants[idx][2] = True
+                        # Remove the $
+                        reactants[idx][1] = reactants[idx][1][1:]
+                    self.addToSpeciesList (reactants[idx])
+               
+                # Strip any spaces from products list
                 for idx, r in enumerate(products):
                     products[idx] = r.strip ()
+                    
                 for idx, r in enumerate(products):
                     if r[0].isdigit():
                        products[idx] = r.split (' ')
                     else:
-                       products[idx] = [1, products[idx]]
-                    self.addToSpeciesList (products[idx][1])
-
-                # Get the parameter list
-                terms = self.my_split(expression, '+/-*()')
+                       products[idx] = [1, products[idx], False]
+                    # Check for boundary condition
+                    if products[idx][1][0] == '$':
+                        products[idx][2] = True
+                        # Remove the $
+                        products[idx][1] = products[idx][1][1:]                       
+                    self.addToSpeciesList (products[idx])
+                   
+                # Construct the parameter list
+                terms = self.my_split(expression, '+/-*()^')
+                # Stip out species, blanks and numbers and duplicates
+                # Pull out the species names for convenience
+                spIds = []
+                for s in self.speciesList:
+                    spIds.append (s['id'])
                 for s in terms:
-                    if not (s in self.speciesList):
-                        self.parameterList.append (s)
-
-                #print (reactants)
-                #print (products)
-                #print (expression)
-
+                    if not (s in spIds):
+                        if s != '':
+                           if not s[0].isdigit():  
+                              if not (s in parameterList):
+                                 if not (s in functionList):
+                                    parameterList.append (s)
+                                                                           
+                print (reactants)
+                print (products)
+                print (expression)
+                
                 self.reactions.append ({'reactionId': reactionId, 
                                         'reactants' : reactants, 
                                         'products' : products, 
-                                        'expression': expression})
+                                        'expression': expression,
+                                        'parameterList': parameterList})
     
+        print ('sp list = ', self.speciesList)
+        print ('parameter list = ', parameterList)
         self.sbmlStr += '<listOfSpecies>' + '\n'
         astr = ''
-        for id in self.speciesList:
-            astr = astr + self.makeSpecies(id)
+        for species in self.speciesList:
+            print ('sp = ', species)
+            astr = astr + self.makeSpecies(species)
             
         self.sbmlStr += astr
         self.sbmlStr += '</listOfSpecies>' + '\n'
             
         self.sbmlStr += '<listOfParameters>' + '\n'
-        for p in self.parameterList:
+        for p in parameterList:
             self.sbmlStr += '<parameter id="' + p + '" value = "0.0" units="dimensionless" constant="true"/>' + '\n'
              
         self.sbmlStr += '</listOfParameters>' + '\n'
@@ -322,8 +441,7 @@ class antToSbml:
             
         astr = ''
         for idx1, r in enumerate (self.reactions):
-            if debugPy:
-               print ('r = ', r)
+            #print ('r = ', r)
             rid = 'J' + str (idx1)
             astr = astr + '<reaction id="' + r['reactionId'] + '"'
             astr = astr + ' reversible="true" fast="false">' + '\n'
@@ -341,6 +459,42 @@ class antToSbml:
                 astr += str (rt[0]) + '" constant="true"/>' + '\n'   
             astr = astr + '</listOfProducts>' + '\n'  
             
+            # Figure out modifiers
+            # construct two lists:
+            # 1. List of reactants in products in current reaction
+            # 2. List of species in the kinetic law
+            # Any symbols in list 2 not found in list 1 are modifiers
+            localSpecies = []
+            for rt in r['reactants']:
+                localSpecies.append (rt[1])
+            for rt in r['products']:
+                localSpecies.append (rt[1]) 
+            
+            localSymbols = []
+            symbols = self.my_split(r['expression'], '+/-*()^')
+            # List of spedies only found in kinetic law
+            for s in symbols:
+                if s != '':
+                   if not s[0].isdigit():
+                      if not (s in parameterList):
+                         if not (s in functionList):
+                            localSymbols.append (s)
+         
+            # Check if there are modifiers
+            modifiers = False
+            for ls in localSymbols:
+                if not (ls in localSpecies):
+                    modifiers = True
+                    
+            if modifiers:
+               astr += '<listOfModifiers>' + '\n'
+               for ls in localSymbols:
+                   if not (ls in localSpecies):
+                      astr += '<modifierSpeciesReference species="'
+                      astr += ls
+                      astr += '"/>' + '\n'
+               astr += '</listOfModifiers>' + '\n'           
+           
             astr += '<kineticLaw>' + '\n'
             p = InfixToMathML(r['expression'])
             astr += p.getMathML () + '\n'
@@ -353,3 +507,4 @@ class antToSbml:
         return self.sbmlStr
 
 
+   
