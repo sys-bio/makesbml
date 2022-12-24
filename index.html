@@ -25,12 +25,11 @@ function copytoclipboard() {
 <py-script src="myadd.py"> </py-script>
 <py-script src="mymult.py"> </py-script>
 <py-script src="infixtomathml.py"> </py-script>
-  
- <py-env>
-    - paths:
-        - mymult.py
-        - myadd.py
-  </py-env> 
+
+  <py-config>
+      packages = ["myadd", "mymult"]
+    </py-config>
+ 
  
 <py-script>
 from js import alert
@@ -54,7 +53,7 @@ def errorHandler(e):
 </py-config>  
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here S:</h5>
+   <h5>Type your model here T:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    J2: 2 A + B -> C; k1*A*B
    ABC: C -> $D; k2*C^6
