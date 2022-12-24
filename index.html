@@ -47,7 +47,7 @@ def errorHandler(e):
   
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here Z:</h5>
+   <h5>Type your model here A:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    J2: 2 A + B -> C; k1*A*B
    ABC: C -> $D; k2*C^6
@@ -65,9 +65,9 @@ def errorHandler(e):
          def getSBML():
              try:
                antStr = Element('antimony').element.value                  
-               #m = antToSbml (antStr)
+               m = antToSbml (antStr)
                #sbml = m.getSBML()   
-               b = multme (4,5)
+               #b = multme (4,5)
                #c = addme (4,5)
                sbml = 'Test text' + str (b) 
                Element('sbml_output').element.value = sbml;
