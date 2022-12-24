@@ -25,8 +25,6 @@ function copytoclipboard() {
  
 
 <py-script src="infixtomathml.py"> </py-script> 
-<py-script src="mymult.py"> </py-script>
-<py-script src="myadd.py"> </py-script>
  
 <py-script>
 from js import alert
@@ -67,10 +65,7 @@ def errorHandler(e):
              try:
                antStr = Element('antimony').element.value                  
                m = antToSbml (antStr)
-               #sbml = m.getSBML()   
-               b = multme (4,5)
-               c = myaddme (4,5)
-               sbml = 'Test text' + str (b) + ', ' + str (c) 
+               sbml = m.getSBML()   
                Element('sbml_output').element.value = sbml;
              except Exception as e:
                errorHandler(e)
