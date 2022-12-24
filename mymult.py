@@ -1,2 +1,2 @@
-def mymult(a,b):
+def multme(a,b):
    return a*b
