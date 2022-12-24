@@ -48,7 +48,7 @@ def errorHandler(e):
   
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here F:</h5>
+   <h5>Type your model here G:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    J2: 2 A + B -> C; k1*A*B
    ABC: C -> $D; k2*C^6
@@ -69,8 +69,8 @@ def errorHandler(e):
                m = antToSbml (antStr)
                #sbml = m.getSBML()   
                b = multme (4,5)
-               c = addme (4,5)
-               sbml = 'Test text' + str (b) 
+               c = myaddme (4,5)
+               sbml = 'Test text' + str (b) + ', ' + str (c) 
                Element('sbml_output').element.value = sbml;
              except Exception as e:
                errorHandler(e)
