@@ -27,7 +27,7 @@ function copytoclipboard() {
     paths = ['myadd.py']
 </py-config>
 
-<py-script src="infixtomathml.py"> </py-script> 
+<!-- <py-script src="infixtomathml.py"> </py-script> -->
  
 <py-script>
 from js import alert
@@ -49,7 +49,7 @@ def errorHandler(e):
   
                                                                                                                               
  <div class="form-group purple-border">
-   <h5>Type your model here B:</h5>
+   <h5>Type your model here C:</h5>
   <textarea class="form-control" id="antimony" rows="8">
    J2: 2 A + B -> C; k1*A*B
    ABC: C -> $D; k2*C^6
@@ -68,7 +68,7 @@ def errorHandler(e):
          def getSBML():
              try:
                antStr = Element('antimony').element.value                  
-               m = antToSbml (antStr)
+               #m = antToSbml (antStr)
                #sbml = m.getSBML()   
                a = m.add1 (3,4) 
                sbml = str (a) 
