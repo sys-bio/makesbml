@@ -1,4 +1,4 @@
 import mymult
 
-def myadd (a,b):
-    return  mymult (a, b)
+def myaddme (a,b):
+    return  mymult.multme (a, b)
