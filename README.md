@@ -9,7 +9,7 @@ This repository hosts the website used to convert Antimony models to SBML (Syste
 - `src` directory: Any files needed to build web site,
 - others, as needed. 
 
-## Antimony javascript library: libantimonyjs
+## Antimony javascript library
 Please see the libantmonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying libantimony.js for use on this site. 
 
 
