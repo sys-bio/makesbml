@@ -4,8 +4,9 @@ This repository hosts the website used to convert Antimony models to SBML (Syste
 
 
 ## Project structure
-- `docs` directory: Web site and Antimony javascript wrapper and associated wasm file.
-- `test` directory: Test models and test web page.
+- `docs` directory: documentation.
+- `antimony` directory: contains libantimony.js and libantimony.wasm files.
+- `test` directory: Test models and test web page. Currently unused.
 - `src` directory: Any files needed to build web site,
 - others, as needed. 
 
