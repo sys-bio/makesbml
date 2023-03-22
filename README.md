@@ -1,6 +1,6 @@
 
 # makesbml website
-This repository hosts the website use to convert Antimony models to SBML (Systems Biology Markup Language) models and vice-versa. <strong>Antimony</strong> (https://github.com/sys-bio/antimony). Antimony is a modular model definition language used in Systems Biology for modeling chemical networks. Please see [SBML site](https://sbml.org) for more information on SBML .  
+This repository hosts the website used to convert Antimony models to SBML (Systems Biology Markup Language) models and vice-versa. <strong>Antimony</strong> (https://github.com/sys-bio/antimony). Antimony is a modular model definition language used in Systems Biology for modeling chemical networks. Please see [SBML site](https://sbml.org) for more information on SBML .  
 
 
 ## Project structure
