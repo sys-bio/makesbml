@@ -1,0 +1,5 @@
+libAntimonyjs release info:
+Date: 2023mar16
+libSBML source: 5.19.0
+Antimony source: 2.13.3
+Emscripten SDK version: 3.1.20

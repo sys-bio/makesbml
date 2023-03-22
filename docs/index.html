@@ -1,0 +1,170 @@
+<html lang="en">
+  <head>
+  <script src="/antimony/libantimony.js" type="text/javascript"></script>
+  <script src="/antimony/libantimony.wasm" type="application/wasm"> </script>  
+  </head>
+	
+<body>
+
+
+
+<script type="text/javascript">
+var antCode;
+var sbmlCode;
+var sbmlResult = 'None';
+var antResult = 'None';
+
+var loadAntimonyString; // libantimony function
+var loadString;			// 		"
+var loadSBMLString;		//		"
+var getSBMLString;		//		"
+var getAntimonyString;	//		"
+var getCompSBMLString;	//		"
+var clearPreviousLoads; //		"
+var getLastError;		//		"
+var getWarnings;		//		"
+var getSBMLInfoMessages;//		"
+var getSBMLWarnings;	//		"
+var freeAll;			//		"
+
+// Load library functions (asynchronous call):
+try {
+ libantimony().then((libantimony) => {
+ //	Format: libantimony.cwrap( function name, return type, input param array of types).
+ loadString = libantimony.cwrap('loadString', 'number', ['string']);
+ loadAntimonyString = libantimony.cwrap('loadAntimonyString', 'number', ['string']);
+ loadSBMLString = libantimony.cwrap('loadSBMLString', 'number', ['string']);
+ getSBMLString = libantimony.cwrap('getSBMLString', 'string', ['null']);
+ getAntimonyString = libantimony.cwrap('getAntimonyString', 'string', ['null']);
+ getCompSBMLString = libantimony.cwrap('getCompSBMLString', 'string', ['string']); 
+ clearPreviousLoads = libantimony.cwrap('clearPreviousLoads', 'null', ['null']);
+ getLastError = libantimony.cwrap('getLastError', 'string', ['null']);
+ getWarnings = libantimony.cwrap('getWarnings', 'string', ['null']);
+ getSBMLInfoMessages = libantimony.cwrap('getSBMLInfoMessages', 'string', ['string']);
+ getSBMLWarnings = libantimony.cwrap('getSBMLWarnings', 'string', ['string']);
+ freeAll = libantimony.cwrap('freeAll', 'null', ['null']);
+ });
+}
+catch(err) {
+  console.log('Load libantimony error: ', err);
+}
+
+</script>
+
+<script type="text/javascript">
+
+function processAntimony() {
+ antCode = document.getElementById("antimonycode").value;
+ clearPreviousLoads();
+ //console.log("*** Antimony code: ",antCode);
+ var load_int= loadAntimonyString(antCode);
+ console.log("processAntimony: int returned: ", load_int);
+ if (load_int > 0) {
+   sbmlResult = getSBMLString(); 
+   document.getElementById("sbmlcode").value = sbmlResult;
+   document.getElementById("procSBMLBtn").disabled = false;
+ }
+ else { 
+   var errStr = getLastError();
+   window.alert(errStr); }
+
+}
+
+function processSBML() {
+ sbmlCode = document.getElementById("sbmlcode").value;
+ clearPreviousLoads();
+ var load_int= loadSBMLString(sbmlCode);
+ console.log("processSBML: int returned: ", load_int);
+ if (load_int > 0) {
+   antResult = getAntimonyString(); 
+   document.getElementById("antimonycode").value = antResult;
+   document.getElementById("procAntimonyBtn").disabled = false;
+ }
+ else { 
+   var errStr = getLastError();
+   window.alert(errStr); 
+   }
+
+ 
+}
+ function processFile(fileStr) {
+ console.log('Loaded Model str: ', fileStr);
+ try {
+   if(loadAntimonyString(fileStr) > 0) {
+   //if(loadSBMLString(fileStr) > 0) {
+	 document.getElementById("antimonycode").value = fileStr; 
+	 document.getElementById("procSBMLBtn").disabled = true;
+	 document.getElementById("sbmlcode").value = "[SBML code here.]";}
+	 else if (loadSBMLString(fileStr) > 0){  
+	// if (loadSBMLString(fileStr) > 0){ 
+	   document.getElementById("sbmlcode").value = fileStr; 
+	   document.getElementById("procAntimonyBtn").disabled = true;
+	   document.getElementById("antimonycode").value = "[Antimony code here.]";
+	   }
+	  else {
+	    var errStr = getLastError();
+		window.alert(errStr);
+		clearPreviousLoads();
+		}
+	}
+	catch(err) {
+	  console.log('processing file error: :', err);
+	  window.alert(err);
+	}
+ }
+
+</script>
+<p>
+<strong>Test the libAntimony functions from within JavaScript. </strong>
+</p>
+<p>
+Convert Antimony to SBML or vice-versa:
+<ul>
+
+<li>Load an Antimony or SBML file to be converted: </li>
+ <input type="file" name="inputfile" id="inputfile">
+    <br> 
+    <script type="text/javascript">
+        document.getElementById('inputfile')
+            .addEventListener('change', function() {
+            var fr=new FileReader();
+            fr.onload=function(){
+				var modelString = fr.result;
+				processFile(modelString);
+            }         
+            fr.readAsText(this.files[0]);
+        })
+    </script>
+
+
+</p>
+<p>
+<p>
+<li><label>Or type or paste in your Antimony:</label></li></br>
+<textarea id="antimonycode" rows="20" cols="80" maxlength="100000">
+[Antimony code here.]
+</textarea>
+</p>
+<p>
+<input type = "button" id="procAntimonyBtn" onclick = "processAntimony()" value = "Convert Antimony to SBML">
+</p>
+<p>
+<input type = "button" id="procSBMLBtn" onclick = "processSBML()" value = "Convert SBML to Antimony">
+</p>
+<p>
+<li><label>Or SBML:</label></li></br>
+<textarea id="sbmlcode" rows="20" cols="80" maxlength="100000">
+[SBML code here.]
+</textarea>
+</p>
+</br>
+</p>
+
+</ul>
+
+</p>
+
+</body>
+
+
+</html>
