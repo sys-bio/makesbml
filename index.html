@@ -63,6 +63,8 @@ function processAntimony() {
    sbmlResult = getSBMLString(); 
    document.getElementById("sbmlcode").value = sbmlResult;
    document.getElementById("procSBMLBtn").disabled = false;
+   document.getElementById("copySBMLBtn").disabled = false;
+   document.getElementById("saveSBMLBtn").disabled = false;
  }
  else { 
    var errStr = getLastError();
@@ -79,6 +81,8 @@ function processSBML() {
    antResult = getAntimonyString(); 
    document.getElementById("antimonycode").value = antResult;
    document.getElementById("procAntimonyBtn").disabled = false;
+   document.getElementById("copyAntimonyBtn").disabled = false;
+   document.getElementById("saveAntimonyBtn").disabled = false;
  }
  else { 
    var errStr = getLastError();
@@ -88,15 +92,13 @@ function processSBML() {
  
 }
  function processFile(fileStr) {
- console.log('Loaded Model str: ', fileStr);
+ //console.log('Loaded Model str: ', fileStr);
  try {
    if(loadAntimonyString(fileStr) > 0) {
-   //if(loadSBMLString(fileStr) > 0) {
 	 document.getElementById("antimonycode").value = fileStr; 
 	 document.getElementById("procSBMLBtn").disabled = true;
 	 document.getElementById("sbmlcode").value = "[SBML code here.]";}
 	 else if (loadSBMLString(fileStr) > 0){  
-	// if (loadSBMLString(fileStr) > 0){ 
 	   document.getElementById("sbmlcode").value = fileStr; 
 	   document.getElementById("procAntimonyBtn").disabled = true;
 	   document.getElementById("antimonycode").value = "[Antimony code here.]";
@@ -113,7 +115,46 @@ function processSBML() {
 	}
  }
 
+function copyToClipboard(copyType) {
+  var copyText;
+  if (copyType == 'antimony') {
+    copyText = document.getElementById("antimonycode");
+  }
+  else {
+    copyText = document.getElementById("sbmlcode");
+  }
+  
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+  // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+
+}
+
+function saveCode(codeType) {
+  var fileExt;
+  if (codeType == 'antimony') { fileExt = ".txt"; }
+  else { fileExt = '.xml';}
+  if (promptFilename = prompt("Save file as (" + fileExt + ") ", "")) {
+		var textBlob;
+		if (codeType == 'antimony') {
+		  textBlob = new Blob([document.getElementById("antimonycode").value], {type:'text/plain'});
+		  }
+		else textBlob = new Blob([document.getElementById("sbmlcode").value], {type:'text/plain'});
+		var downloadLink = document.createElement("a");
+		downloadLink.download = promptFilename + fileExt;
+		downloadLink.innerHTML = "Download File";
+		downloadLink.href = window.URL.createObjectURL(textBlob);
+		downloadLink.click();
+    delete downloadLink;
+    delete textBlob;
+	}
+
+}
+
 </script>
+<!-- *** Page layout *** -->
 <p>
 <strong>Make SBML models </strong>
 </p>
@@ -135,10 +176,8 @@ Convert Antimony to SBML or vice-versa:
             fr.readAsText(this.files[0]);
         })
     </script>
-
-
 </p>
-<p>
+<p></p>
 <p>
 <li><label>Or type or paste in your Antimony:</label></li></br>
 <textarea id="antimonycode" rows="20" cols="80" maxlength="100000">
@@ -149,7 +188,12 @@ Convert Antimony to SBML or vice-versa:
 <input type = "button" id="procAntimonyBtn" onclick = "processAntimony()" value = "Convert Antimony to SBML">
 </p>
 <p>
-<input type = "button" id="procSBMLBtn" onclick = "processSBML()" value = "Convert SBML to Antimony">
+<table><tr>
+<td> <input type = "button" id="copyAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('antimony')" value = "Copy Antimony to clipboard"></td>
+<td><input type = "button" id="saveAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('antimony')" value = "Save Antimony to file"></td>
+</tr>
+</table>
+</p><p>
 </p>
 <p>
 <li><label>Or SBML:</label></li></br>
@@ -157,14 +201,17 @@ Convert Antimony to SBML or vice-versa:
 [SBML code here.]
 </textarea>
 </p>
-</br>
+<p>
+<input type = "button" id="procSBMLBtn" onclick = "processSBML()" value = "Convert SBML to Antimony">
 </p>
-
+<p>
+<table><tr>
+<td> <input type = "button" id="copySBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('sbml')" value = "Copy SBML to clipboard"></td>
+<td><input type = "button" id="saveSBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('sbml')" value = "Save SBML to file"></td>
+</tr>
+</table>
+</p>
 </ul>
-
-</p>
-
 </body>
-
 
 </html>
