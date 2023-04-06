@@ -179,40 +179,63 @@ Convert Antimony to SBML or vice-versa:
         })
     </script>
 </p>
-<p></p>
+
 <p>
+<table>
+
+<tr>
+<td>
 <li><label>Or type or paste in your Antimony:</label></li></br>
-<textarea id="antimonycode" rows="20" cols="80" maxlength="1000000">
+</td>
+<td>
+<li><label>Or SBML:</label></li></br>
+</td>
+</tr>
+
+<tr>
+<td>
+<textarea id="antimonycode" rows="20" cols="60" maxlength="1000000">
 [Antimony code here.]
 </textarea>
-</p>
-<p>
-<input type = "button" id="procAntimonyBtn" onclick = "processAntimony()" value = "Convert Antimony to SBML">
-</p>
-<p>
-<table><tr>
-<td> <input type = "button" id="copyAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('antimony')" value = "Copy Antimony to clipboard"></td>
-<td><input type = "button" id="saveAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('antimony')" value = "Save Antimony to file"></td>
-</tr>
-</table>
-</p><p>
-</p>
-<p>
-<li><label>Or SBML:</label></li></br>
-<textarea id="sbmlcode" rows="20" cols="80" maxlength="2000000">
+</td>
+<td>
+<textarea id="sbmlcode" rows="20" cols="60" maxlength="2000000">
 [SBML code here.]
 </textarea>
-</p>
-<p>
-<input type = "button" id="procSBMLBtn" onclick = "processSBML()" value = "Convert SBML to Antimony">
-</p>
-<p>
-<table><tr>
-<td> <input type = "button" id="copySBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('sbml')" value = "Copy SBML to clipboard"></td>
-<td><input type = "button" id="saveSBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('sbml')" value = "Save SBML to file"></td>
+</td>
 </tr>
-</table>
 </p>
+
+<tr>
+<p>
+<td>
+<input type = "button" id="procAntimonyBtn" onclick = "processAntimony()" value = "Convert Antimony to SBML">
+</td>
+<td>
+<input type = "button" id="procSBMLBtn" onclick = "processSBML()" value = "Convert SBML to Antimony">
+</td>
+</p>
+</tr>
+
+<p>
+<tr>
+<td>
+<table><tr><td> <input type = "button" id="copyAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('antimony')" value = "Copy Antimony to clipboard"></td>
+<td><input type = "button" id="saveAntimonyBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('antimony')" value = "Save Antimony to file"></td></tr></table>
+
+</td>
+
+<td> 
+<table><tr><td><input type = "button" id="copySBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "copyToClipboard('sbml')" value = "Copy SBML to clipboard"></td>
+<td><input type = "button" id="saveSBMLBtn" style="background-color:#527aad;color:white;" disabled onclick = "saveCode('sbml')" value = "Save SBML to file"></td></tr></table>
+</td>
+</tr>
+</p>
+
+
+
+</table>
+
 </ul>
 </body>
 
