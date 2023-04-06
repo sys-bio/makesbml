@@ -97,11 +97,13 @@ function processSBML() {
    if(loadAntimonyString(fileStr) > 0) {
 	 document.getElementById("antimonycode").value = fileStr; 
 	 document.getElementById("procSBMLBtn").disabled = true;
-	 document.getElementById("sbmlcode").value = "[SBML code here.]";}
+	 document.getElementById("sbmlcode").value = "[SBML code here.]";
+	 processAntimony();}
 	 else if (loadSBMLString(fileStr) > 0){  
 	   document.getElementById("sbmlcode").value = fileStr; 
 	   document.getElementById("procAntimonyBtn").disabled = true;
 	   document.getElementById("antimonycode").value = "[Antimony code here.]";
+	   processSBML();
 	   }
 	  else {
 	    var errStr = getLastError();
