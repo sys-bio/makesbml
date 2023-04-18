@@ -1,5 +1,14 @@
-libAntimonyjs release info:
-Date: 2023mar16
+libAntimonyjs release 1.0.0 info:
+Date: 2023apr18
 libSBML source: 5.19.0
 Antimony source: 2.13.3
 Emscripten SDK version: 3.1.20
+
+Following Methods are available:
+
+From Antimony library:
+_loadString, _loadAntimonyString, _loadSBMLString, _clearPreviousLoads, _getAntimonyString, _freeAll,
+_getSBMLString, _getCompSBMLString, _getLastError, _getWarnings, _getSBMLInfoMessages, _getSBMLWarnings,
+
+From Emscripten:
+_malloc, _free, ccall, cwrap, allocateUTF8, UTF8ToString

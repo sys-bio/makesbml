@@ -26,14 +26,16 @@ var getWarnings;		//		"
 var getSBMLInfoMessages;//		"
 var getSBMLWarnings;	//		"
 var freeAll;			//		"
+var free;    		 // emscripten function
+var jsAllocateUTF8;  //  		"
 
 // Load library functions (asynchronous call):
 try {
  libantimony().then((libantimony) => {
  //	Format: libantimony.cwrap( function name, return type, input param array of types).
- loadString = libantimony.cwrap('loadString', 'number', ['string']);
- loadAntimonyString = libantimony.cwrap('loadAntimonyString', 'number', ['string']);
- loadSBMLString = libantimony.cwrap('loadSBMLString', 'number', ['string']);
+ loadString = libantimony.cwrap('loadString', 'number', ['number']);
+ loadAntimonyString = libantimony.cwrap('loadAntimonyString', 'number', ['number']);
+ loadSBMLString = libantimony.cwrap('loadSBMLString', 'number', ['number']);
  getSBMLString = libantimony.cwrap('getSBMLString', 'string', ['null']);
  getAntimonyString = libantimony.cwrap('getAntimonyString', 'string', ['null']);
  getCompSBMLString = libantimony.cwrap('getCompSBMLString', 'string', ['string']); 
@@ -43,6 +45,9 @@ try {
  getSBMLInfoMessages = libantimony.cwrap('getSBMLInfoMessages', 'string', ['string']);
  getSBMLWarnings = libantimony.cwrap('getSBMLWarnings', 'string', ['string']);
  freeAll = libantimony.cwrap('freeAll', 'null', ['null']);
+ 
+ jsFree = (strPtr) => libantimony._free(strPtr); 
+ jsAllocateUTF8 = (newStr) =>  libantimony.allocateUTF8(newStr); 
  });
 }
 catch(err) {
@@ -57,7 +62,8 @@ function processAntimony() {
  antCode = document.getElementById("antimonycode").value;
  clearPreviousLoads();
  //console.log("*** Antimony code: ",antCode);
- var load_int= loadAntimonyString(antCode);
+ var ptrAntCode = jsAllocateUTF8(antCode);
+ var load_int= loadAntimonyString(ptrAntCode);
  console.log("processAntimony: int returned: ", load_int);
  if (load_int > 0) {
    sbmlResult = getSBMLString(); 
@@ -69,13 +75,14 @@ function processAntimony() {
  else { 
    var errStr = getLastError();
    window.alert(errStr); }
-
+ jsFree(ptrAntCode);
 }
 
 function processSBML() {
  sbmlCode = document.getElementById("sbmlcode").value;
  clearPreviousLoads();
- var load_int= loadSBMLString(sbmlCode);
+ var ptrSBMLCode = jsAllocateUTF8(sbmlCode);
+ var load_int= loadSBMLString(ptrSBMLCode);
  console.log("processSBML: int returned: ", load_int);
  if (load_int > 0) {
    antResult = getAntimonyString(); 
@@ -88,18 +95,19 @@ function processSBML() {
    var errStr = getLastError();
    window.alert(errStr); 
    }
-
- 
+ jsFree(ptrSBMLCode);
 }
+
  function processFile(fileStr) {
  //console.log('Loaded Model str: ', fileStr);
  try {
-   if(loadAntimonyString(fileStr) > 0) {
+     var ptrFileStr = jsAllocateUTF8(fileStr);
+     if(loadAntimonyString(ptrFileStr) > 0) {
 	 document.getElementById("antimonycode").value = fileStr; 
 	 document.getElementById("procSBMLBtn").disabled = true;
 	 document.getElementById("sbmlcode").value = "[SBML code here.]";
-	 processAntimony();}
-	 else if (loadSBMLString(fileStr) > 0){  
+	 processAntimony();}  
+	 else if (loadSBMLString(ptrFileStr) > 0){
 	   document.getElementById("sbmlcode").value = fileStr; 
 	   document.getElementById("procAntimonyBtn").disabled = true;
 	   document.getElementById("antimonycode").value = "[Antimony code here.]";
@@ -115,6 +123,7 @@ function processSBML() {
 	  console.log('processing file error: :', err);
 	  window.alert(err);
 	}
+	jsFree(ptrFileStr);
  }
 
 function copyToClipboard(copyType) {
