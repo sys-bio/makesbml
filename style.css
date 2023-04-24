@@ -22,7 +22,7 @@ border:none;
 border-radius: 8px;
 box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 height: 70%;
-resize: none;
+resize: horizontal;
 }
 #procAntimonyBtn, #procSBMLBtn{
 background-color: #293D56;
@@ -82,17 +82,7 @@ width: 100%;
 justify-content: space-between;
 align-items: center;
 color:#293D56;
-/*#inputfile {
-font-size: 1.25em;
-font-weight: 70;
-color: white;
-background-color: black;
-display: inline-block;
-}
-#inputfile:focus,
-#inputfile + label:hover {
-background-color: red;
-}*/
+
 }
 input[type=file]::file-selector-button{
 background-color: #293D56;
