@@ -10,10 +10,10 @@ Antimony (https://github.com/sys-bio/antimony). Antimony is a modular model defi
 
 
 Project structure
-- `docs` directory: documentation.
+- `docs` directory: documentation (none currently)
 - `antimony` directory: contains libantimony.js and libantimony.wasm files.
 - `test` directory: Test models and test web page. Currently unused.
-- `src` directory: Any files needed to build web site,
+- `src` directory: Any files needed to build web site (main files, index and style are at the top level, so src directory),
 - others, as needed. 
 
 Antimony javascript library
