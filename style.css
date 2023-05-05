@@ -44,7 +44,14 @@ position: relative;
 display: flex;
 align-items: center;
 justify-content: center;
-height: 90vh;
+height: 80vh;
+}
+.link-box{
+ height: 2vh; 
+ display: flex; 
+ align-items: center;
+ flex-direction: row;  
+ justify-content: center;
 }
 #antimony-code-wrapper, #sbml-code-wrapper{
 display: flex;
@@ -52,7 +59,7 @@ flex-direction: column;
 /* align-items: center; */
 justify-content: center;
 height: 100vh;
-gap: 10px;
+gap: 50px;
 position: relative;
 }
 .input-wrapper{
@@ -64,6 +71,22 @@ align-items: center;
 padding: 7px;
 border-radius: 6px;
 }
+.link-btn{
+padding: 5px;
+width: 180px;
+z-index: 1000;
+color:#293D56;
+height: 30px;
+border-radius: 6px;
+}
+
+.link-btn:focus{
+
+border: 2px solid white;
+
+}
+
+
 #convert-btn-wrapper{
 display: flex;
 flex-direction: column;

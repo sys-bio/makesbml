@@ -23,11 +23,30 @@ processFile(modelString);
 fr.readAsText(this.files[0]);
 })
 </script> -->
+<br />
+<div class="link-box"> 
+<input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+onclick="window.location.href='https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics';" value="Antimony information">
+<input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+onclick="window.location.href='https://sbml.org';" value="SBML information">
+</div> <!-- mine -->
 <div id="wrapper">
+
 <div id="antimony-code-wrapper">
+
 <input type="file" name="inputfile" id="inputfile"><br />
 <textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
-placeholder="[Antimony code here.]"></textarea>
+placeholder="[Antimony code here]">
+ # Sample Antimony model:
+ J0: S1 -> S2 + S3; k1*S1 # Mass-action kinetics
+ J1: S2 -> S3 + S4; k2*S2 
+ S1 = 10 # The initial concentration of S1
+ S2 = 0  # The initial concentration of S3
+ S3 = 3  # The initial concentration of S3
+ S4 = 0  # The initial concentration of S4
+ k1 = 0.1 # The value of the kinetic parameter from J0.
+ k2 = 0.2 # The value of the kinetic parameter from J1.
+ </textarea>
 <div class="input-wrapper">
 <input type="button" id="saveAntimonyBtn"
 style="background-color:#293D56;color:white;"
