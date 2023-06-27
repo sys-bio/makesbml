@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="../antimony/libantimony.js" type="text/javascript"></script>
+  <script src="../antimony/libantimony.wasm" type="application/wasm"> </script>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <title>Make SBML Models!</title>
+</head>
+
+<body>
+  <div id="app">
+    <nav>
+      <h1>Make SMBL Models!</h1>
+    </nav>
+
+    <div>
+      <div id="wrapper">
+
+        <div id="antimony-code-wrapper">
+          <input type="file" name="inputfile" id="inputfile">
+          <textarea id="antimonycode" rows="20" cols="60" maxlength="1000000"
+            placeholder="[Antimony code here.]"></textarea>
+
+          <div class="input-wrapper">
+            <input type="button" id="saveAntimonyBtn" style="background-color:#527aad;color:white;"
+              value="Save Antimony to file">
+
+            <input type="button" id="copyAntimonyBtn" style="background-color:#527aad;color:white;"
+              value="Copy Antimony to clipboard">
+          </div>
+
+
+        </div>
+        <div id="convert-btn-wrapper">
+          <button id="procAntimonyBtn" value="Convert Antimony to SBML">→</button>
+          <button id="procSBMLBtn">←</button>
+        </div>
+        <div id="sbml-code-wrapper">
+
+          <div id="xml-id-wrapper">
+            <div id="xml-download-wrapper">
+              <div id='xml-download-search'>
+                <input autocomplete="off" id="xml-id-search-input1" placeholder="Search bioModels...">
+                <div class="loader" id="loader-list1"></div>
+                </input>
+                <button> Download </button>
+
+              </div>
+
+              <div id="rec1-wrapper">
+                <ul id="xml-1-rec">
+                </ul>
+              </div>
+            </div>
+            <div id="xml-import-wrapper">
+              <div id="xml-import-search">
+               <!-- <input autocomplete="off" id="xml-id-input2" placeholder="Input bio model ..."> -->
+                <div class="loader" id="loader-list2"></div>
+
+                </input>
+
+
+            <!--    <button>Import
+
+                </button> -->
+              </div> 
+
+              <div id="rec2-wrapper">
+                <ul id="xml-2-rec">
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <textarea id="sbmlcode" rows="20" cols="60" maxlength="2000000" placeholder="[SBML code here.]"></textarea>
+          <div class="input-wrapper">
+            <input type="button" id="saveSBMLBtn" style="background-color:#527aad;color:white;"
+              value="Save SBML to file">
+            <input type="button" id="copySBMLBtn" style="background-color:#527aad;color:white;"
+              value="Copy SBML to clipboard">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>
