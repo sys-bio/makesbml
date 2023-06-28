@@ -326,17 +326,14 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
 async function downloadXml(modelId) {
   const proxy = " https://api.allorigins.win/raw?url=";
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
- // const apiUrl = `https://www.ebi.ac.uk/biomodels/${modelId}?format=json`;
-log(apiUrl);
+ 
+  //log(apiUrl);
   if (isValidUrl(apiUrl)) {
     await fetch(proxy + apiUrl)
-     // .then((response) => response.text())
 	  .then((response) => response.json())
       .then((data) => {
-		  log(data);
+		 // log(data);
 		  processJSONModelInfo(modelId, data);
-      //  var file = window.URL.createObjectURL(blob);
-      //  window.location.assign(file);
       })
       .catch((err) => console.error(err));
   } else {
@@ -344,24 +341,37 @@ log(apiUrl);
   }
 }
 
+async function processUserQuery(queryStr) {
+  let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);
+ // log('Query: ',query, query.length)
+  let searchQuery = '';
+  for(let i = 0; i < query.length; i++) {
+	if(i == length - 1) {
+	  searchQuery += query[i];}
+    else {
+	  searchQuery += query[i] +'%20';}	
+  }
+  //log(' --> search: ',searchQuery);
+  return searchQuery;	
+}
 
 
 async function getModelIdRecommend(query) {
+  const biomodelsQuery = await processUserQuery(query); 
   const proxy = "https://api.allorigins.win/raw?url=";
   const format = "json";
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${query}%26numResults=${maxRec}%26format=${format}`;
+  const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%26numResults=${maxRec}%26format=${format}`;
  // https://www.ebi.ac.uk/biomodels/search?query=calcium%20and%20curationstatus%3A%22Manually%20curated%22&numResults=25&format=json
  // const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${query}%20and%20curationstatus%3A%22manually%20curated%22&numResults=25&format=${format}` 
-  log(apiUrl);
-  log('getModelIdRecommend()');
-  log(query)
+  //log(apiUrl);
+  //log(query)
   let models;
   if (isValidUrl(apiUrl)) {
-    log("fetching")
+   // log("fetching")
     await fetch(proxy + apiUrl)
       .then((response) => {
 
-         log("request 1 complete")
+        // log("request 1 complete")
         return response.json()
       })
       .then((data) => {
@@ -386,9 +396,5 @@ async function handleDownloadModel() {
     await downloadXml(xmlDownloadInput.value.trim());
   }
 }
-async function handleImportModel() {
-  //if (xmlImportInput.value.trim().length > 1) {
-  //  await importXml(xmlImportInput.value.trim(), "json");
- // }
-}
+
 
