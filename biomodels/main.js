@@ -3,6 +3,7 @@ let { log } = console;
 
 let models = [];
 const maxRec = 15;
+const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
 var antCode;
 var sbmlCode;
 var sbmlResult = "None";
@@ -35,15 +36,13 @@ const xmlImportButton = document.querySelector("#xml-import-wrapper button")
 const xmlRecList1Loader = document.getElementById("loader-list1");
 const xmlRecList2Loader = document.getElementById("loader-list2");
 const xmlDownloadInput = document.getElementById("xml-id-search-input1");
-//const xmlImportInput = document.getElementById("xml-id-input2");
 const xmlRecList1 = document.getElementById("xml-1-rec");
-//const xmlRecList2 = document.getElementById("xml-2-rec");
 
 const saveSBMLBtn = document.getElementById("saveSBMLBtn");
 const copySBMLBtn = document.getElementById("copySBMLBtn");
 
 const rec1Wrapper = document.getElementById("rec1-wrapper");
-const rec2Wrapper = document.getElementById("rec2-wrapper");
+//const rec2Wrapper = document.getElementById("rec2-wrapper");
 
 const antTextArea = document.getElementById("antimonycode");
 const sbmlTextArea = document.getElementById("sbmlcode");
@@ -69,7 +68,6 @@ window.onload = function() {
   xmlDownloadInput.addEventListener("click", (e) => {
     e.preventDefault();
     xmlRecList1.style.display = "block";
-    //xmlRecList2.style.display = "none";
     e.stopPropagation();
   });
   xmlDownloadInput.addEventListener("keyup", async (e) => {
@@ -88,8 +86,7 @@ window.onload = function() {
       const text = e.target.innerText;
       xmlDownloadInput.value = text.split(": ").slice(-1);
     };
-log('recommends length: ', recommends.length);
-log('recommends? length: ', recommends?.length);
+//log('recommends? length: ', recommends?.length);
     if (recommends?.length) {
 	   var numb = 0;
       xmlRecList1.innerHTML = "";
@@ -105,14 +102,12 @@ log('recommends? length: ', recommends?.length);
     xmlRecList1Loader.classList.remove("showLoader")
 
   });
-
  
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
 
   document.body.onclick = (e) => {
     xmlRecList1.style.display = "none";
-   // xmlRecList2.style.display = "none";
   };
 
   xmlDownloadButton
@@ -246,6 +241,7 @@ function copyToClipboard(copyType) {
 
 function saveCode(codeType) {
   var fileExt;
+  var promptFilename;
   if (codeType == "antimony") {
     fileExt = ".txt";
   } else {
@@ -283,12 +279,10 @@ function isValidUrl(str) {
   return pattern.test(str);
 }
 
-//async function importXml(modelId, format) {
 async function importXml(modelId, fileName) {
-  const proxy = " https://api.allorigins.win/raw?url=";
- // const apiUrl = `https://www.ebi.ac.uk/biomodels/${modelId}?format=${format}`;
- const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}?filename=${fileName}`;
-//https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000444?filename=BIOMD0000000444_url.xml
+  //const proxy = " https://api.allorigins.win/raw?url=";
+  const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}?filename=${fileName}`;
+// Ex: https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000444?filename=BIOMD0000000444_url.xml
   if (isValidUrl(apiUrl)) {
     await fetch(proxy + apiUrl)
       .then((response) => response.text())
@@ -306,9 +300,7 @@ async function importXml(modelId, fileName) {
 async function processJSONModelInfo(modelId,modelInfoJSON) {
 //console.log('Loaded JSON str: ', modelInfoJSON);
  try {
-  const mainFilesList = modelInfoJSON.main
-//console.log(modelList);
-  
+  const mainFilesList = modelInfoJSON.main 
   var curList = '';
   if( mainFilesList.length >0 ) {
     let modelInfo = mainFilesList[0];
@@ -322,11 +314,10 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
  window.alert(err);
  }
 }
-//Do not use
+
 async function downloadXml(modelId) {
-  const proxy = " https://api.allorigins.win/raw?url=";
+ // const proxy = " https://api.allorigins.win/raw?url=";
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
- 
   //log(apiUrl);
   if (isValidUrl(apiUrl)) {
     await fetch(proxy + apiUrl)
@@ -343,10 +334,10 @@ async function downloadXml(modelId) {
 
 async function processUserQuery(queryStr) {
   let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);
- // log('Query: ',query, query.length)
+  //log('Query: ',query, query.length)
   let searchQuery = '';
   for(let i = 0; i < query.length; i++) {
-	if(i == length - 1) {
+	if(i == query.length - 1) {
 	  searchQuery += query[i];}
     else {
 	  searchQuery += query[i] +'%20';}	
@@ -358,28 +349,25 @@ async function processUserQuery(queryStr) {
 
 async function getModelIdRecommend(query) {
   const biomodelsQuery = await processUserQuery(query); 
-  const proxy = "https://api.allorigins.win/raw?url=";
   const format = "json";
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%26numResults=${maxRec}%26format=${format}`;
- // https://www.ebi.ac.uk/biomodels/search?query=calcium%20and%20curationstatus%3A%22Manually%20curated%22&numResults=25&format=json
- // const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${query}%20and%20curationstatus%3A%22manually%20curated%22&numResults=25&format=${format}` 
-  //log(apiUrl);
-  //log(query)
+ // const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%26numResults=${maxRec}%26format=${format}`;
+  const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%20BIOMD%2A%26numResults=${maxRec}%26format=${format}`;
+ // Only want model numbers starting with BIOMD: https://www.ebi.ac.uk/biomodels/search?query=sodium%20BIOMD%2A%26numResults=15%26format=json 
+ 
   let models;
   if (isValidUrl(apiUrl)) {
-   // log("fetching")
+    //log("fetching...", apiUrl)
     await fetch(proxy + apiUrl)
       .then((response) => {
-
-        // log("request 1 complete")
+        //log("request 1 complete")
         return response.json()
       })
       .then((data) => {
-        log(data)
         // log("request 2 complete")
         (models = data.models)
       })
       .catch(err => {
+		  //log('Nothing returned from query');
         if (err instanceof TypeError) return []
       });
   } else {
