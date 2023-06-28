@@ -37,7 +37,7 @@ const xmlRecList2Loader = document.getElementById("loader-list2");
 const xmlDownloadInput = document.getElementById("xml-id-search-input1");
 //const xmlImportInput = document.getElementById("xml-id-input2");
 const xmlRecList1 = document.getElementById("xml-1-rec");
-const xmlRecList2 = document.getElementById("xml-2-rec");
+//const xmlRecList2 = document.getElementById("xml-2-rec");
 
 const saveSBMLBtn = document.getElementById("saveSBMLBtn");
 const copySBMLBtn = document.getElementById("copySBMLBtn");
@@ -69,7 +69,7 @@ window.onload = function() {
   xmlDownloadInput.addEventListener("click", (e) => {
     e.preventDefault();
     xmlRecList1.style.display = "block";
-    xmlRecList2.style.display = "none";
+    //xmlRecList2.style.display = "none";
     e.stopPropagation();
   });
   xmlDownloadInput.addEventListener("keyup", async (e) => {
@@ -106,58 +106,18 @@ log('recommends? length: ', recommends?.length);
 
   });
 
- /* xmlImportInput.addEventListener("keyup", async (e) => {
-
-    const searchText = e.target.value.trim();
-    const loader = xmlImportInput
-    if (searchText.length <= 1) {
-      xmlRecList2.innerHTML = "";
-      return;
-    }
-
-    xmlRecList2Loader.classList.add("showLoader")
-
-    let recommends = await getModelIdRecommend(searchText);
-    const handleSelection = (e) => {
-      e.preventDefault();
-      const text = e.target.innerText;
-      xmlImportInput.value = text.split(": ").slice(-1);
-      handleImportModel();
-    };
-
-    if (recommends?.length) {
-      xmlRecList2.innerHTML = "";
-
-      recommends = recommends?.slice(0, maxRec);
-      for (const rec of recommends) {
-        xmlRecList2.append(createRecItem(rec, handleSelection));
-      }
-    }
-
-    xmlRecList2Loader.classList.remove("showLoader")
-
-  }); */
-
-  /*xmlImportInput.addEventListener("click", (e) => {
-    e.preventDefault();
-    xmlRecList2.style.display = "block";
-    xmlRecList1.style.display = "none";
-    e.stopPropagation();
-  }); */
-
+ 
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
 
   document.body.onclick = (e) => {
     xmlRecList1.style.display = "none";
-    xmlRecList2.style.display = "none";
+   // xmlRecList2.style.display = "none";
   };
 
   xmlDownloadButton
     .addEventListener("click", handleDownloadModel);
- // xmlImportButton
- //   .querySelector("#xml-import-wrapper button")
- //   .addEventListener("click", handleImportModel);
+
 
   inputFile.addEventListener("change", function() {
     var fr = new FileReader();
@@ -335,6 +295,7 @@ async function importXml(modelId, fileName) {
       .then((data) => {
         // console.log(data.description);
         sbmlTextArea.value = data;
+		processSBML(); // generate antimony version
       })
       .catch((err) => console.error(err));
   } else {

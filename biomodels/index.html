@@ -14,30 +14,50 @@
   <div id="app">
     <nav>
       <h1>Make SBML Models!</h1>
+	  <h3  align="center">When choosing a file you can pick an SBML or Antimony file to convert </h3>
     </nav>
-
+	</br>
+  <div class="link-box"> 
+  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+  onclick="window.location.href='https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics';" value="Antimony information">
+  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+  onclick="window.location.href='https://sbml.org';" value="SBML information">
+  </div> <!-- mine -->
+  </br>
     <div>
       <div id="wrapper">
 
         <div id="antimony-code-wrapper">
-          <input type="file" name="inputfile" id="inputfile">
-          <textarea id="antimonycode" rows="20" cols="60" maxlength="1000000"
-            placeholder="[Antimony code here.]"></textarea>
+          <input type="file" name="inputfile" id="inputfile"> </br>
+          <textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
+            placeholder="[Antimony code here.]">	
+# Sample Antimony model:
+J0: S1 -> S2 + S3; k1*S1 # Mass-action kinetics
+J1: S2 -> S3 + S4; k2*S2 
+		
+S1 = 10 # The initial concentration of S1
+S2 = 0  # The initial concentration of S3
+S3 = 3  # The initial concentration of S3
+S4 = 0  # The initial concentration of S4
+			
+k1 = 0.1 # The value of the kinetic parameter from J0.
+k2 = 0.2 # The value of the kinetic parameter from J1.
+			</textarea>
 
           <div class="input-wrapper">
-            <input type="button" id="saveAntimonyBtn" style="background-color:#527aad;color:white;"
+            <input type="button" id="saveAntimonyBtn" style="background-color:#293D56;color:white;"
               value="Save Antimony to file">
 
-            <input type="button" id="copyAntimonyBtn" style="background-color:#527aad;color:white;"
+            <input type="button" id="copyAntimonyBtn" style="background-color:#293D56;color:white;"
               value="Copy Antimony to clipboard">
           </div>
 
-
         </div>
+       
         <div id="convert-btn-wrapper">
           <button id="procAntimonyBtn" value="Convert Antimony to SBML">→</button>
           <button id="procSBMLBtn">←</button>
-        </div>
+        </div>  
         <div id="sbml-code-wrapper">
 
           <div id="xml-id-wrapper">
@@ -47,7 +67,6 @@
                 <div class="loader" id="loader-list1"></div>
                 </input>
                 <button> Download </button>
-
               </div>
 
               <div id="rec1-wrapper">
@@ -58,29 +77,20 @@
             <div id="xml-import-wrapper">
               <div id="xml-import-search">
                <!-- <input autocomplete="off" id="xml-id-input2" placeholder="Input bio model ..."> -->
-                <div class="loader" id="loader-list2"></div>
-
-                </input>
-
-
-            <!--    <button>Import
-
-                </button> -->
+               <!-- <div class="loader" id="loader-list2"></div> -->
+              <!--  </input> -->
               </div> 
-
               <div id="rec2-wrapper">
-                <ul id="xml-2-rec">
-                </ul>
+               <!-- <ul id="xml-2-rec"></ul> -->
               </div>
-
             </div>
           </div>
-
-          <textarea id="sbmlcode" rows="20" cols="60" maxlength="2000000" placeholder="[SBML code here.]"></textarea>
-          <div class="input-wrapper">
-            <input type="button" id="saveSBMLBtn" style="background-color:#527aad;color:white;"
+          </br>
+          <textarea id="sbmlcode" rows="20" cols="80" maxlength="2000000" placeholder="[SBML code here.]"></textarea>
+          <div class="input-wrapper" >
+            <input type="button" id="saveSBMLBtn" style="background-color:#293D56;color:white;"
               value="Save SBML to file">
-            <input type="button" id="copySBMLBtn" style="background-color:#527aad;color:white;"
+            <input type="button" id="copySBMLBtn" style="background-color:#293D56;color:white;"
               value="Copy SBML to clipboard">
           </div>
 
