@@ -46,6 +46,7 @@ const rec1Wrapper = document.getElementById("rec1-wrapper");
 
 const antTextArea = document.getElementById("antimonycode");
 const sbmlTextArea = document.getElementById("sbmlcode");
+
 window.onload = function() {
   initLoad();
   saveAntimonyBtn.addEventListener("click", (_) => saveCode("antimony"));
@@ -126,11 +127,13 @@ window.onload = function() {
 
   inputFile.addEventListener("change", function() {
     var fr = new FileReader();
+	xmlRecList1Loader.classList.add("showLoader");
     fr.onload = function() {
       var modelString = fr.result;
       processFile(modelString);
     };
     fr.readAsText(this.files[0]);
+	
   });
 };
 
@@ -192,12 +195,12 @@ function processAntimony() {
   }
   jsFree(ptrAntCode);
 }
-function processSBML() {
+async function processSBML() {
   sbmlCode = sbmlTextArea.value;
   clearPreviousLoads();
   var ptrSBMLCode = jsAllocateUTF8(sbmlCode);
   var load_int = loadSBMLString(ptrSBMLCode);
-  console.log("processSBML: int returned: ", load_int);
+  //console.log("processSBML: int returned: ", load_int);
   if (load_int > 0) {
     antResult = getAntimonyString();
     antTextArea.value = antResult;
@@ -211,8 +214,9 @@ function processSBML() {
   jsFree(ptrSBMLCode);
 }
 
-function processFile(fileStr) {
+async function processFile(fileStr) {
   try {
+	//  xmlRecList1Loader.classList.add("showLoader");
     var ptrFileStr = jsAllocateUTF8(fileStr);
     if (loadAntimonyString(ptrFileStr) > 0) {
       antTextArea.value = fileStr;
@@ -223,7 +227,9 @@ function processFile(fileStr) {
       sbmlTextArea.value = fileStr;
       procAntimonyBtn.disabled = true;
       antTextArea.value = "[Antimony code here.]";
-      processSBML();
+	  
+      await processSBML();
+	  xmlRecList1Loader.classList.remove("showLoader");// added in inputFile.addEventListener("change" )
     } else {
       var errStr = getLastError();
       window.alert(errStr);
@@ -295,6 +301,7 @@ async function importXml(modelId, fileName) {
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}?filename=${fileName}`;
 // Ex: https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000444?filename=BIOMD0000000444_url.xml
   if (isValidUrl(apiUrl)) {
+	  xmlRecList1Loader.classList.add("showLoader")
     await fetch(proxy + apiUrl)
       .then((response) => response.text())
       .then((data) => {
@@ -306,10 +313,12 @@ async function importXml(modelId, fileName) {
   } else {
     alert("Invalid Model ID");
   }
+  xmlRecList1Loader.classList.remove("showLoader")
 }
 
 async function processJSONModelInfo(modelId,modelInfoJSON) {
 //console.log('Loaded JSON str: ', modelInfoJSON);
+ 
  try {
   const mainFilesList = modelInfoJSON.main 
   var curList = '';
@@ -324,12 +333,14 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
  console.log('processing file error: :', err);
  window.alert(err);
  }
+ 
 }
 
 async function downloadXml(modelId) {
  // const proxy = " https://api.allorigins.win/raw?url=";
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
   //log(apiUrl);
+  xmlRecList1Loader.classList.add("showLoader")
   if (isValidUrl(apiUrl)) {
     await fetch(proxy + apiUrl)
 	  .then((response) => response.json())
@@ -341,6 +352,7 @@ async function downloadXml(modelId) {
   } else {
     alert("Invalid Model ID");
   }
+  xmlRecList1Loader.classList.remove("showLoader")
 }
 
 async function processUserQuery(queryStr) {
@@ -361,6 +373,7 @@ async function processUserQuery(queryStr) {
 async function getModelIdRecommend(query) {
   const biomodelsQuery = await processUserQuery(query); 
   const format = "json";
+  xmlRecList1Loader.classList.add("showLoader")
  // const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%26numResults=${maxRec}%26format=${format}`;
   const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%20BIOMD%2A%26numResults=${maxRec}%26format=${format}`;
  // Only want model numbers starting with BIOMD: https://www.ebi.ac.uk/biomodels/search?query=sodium%20BIOMD%2A%26numResults=15%26format=json 
@@ -384,7 +397,7 @@ async function getModelIdRecommend(query) {
   } else {
     alert("Invalid url");
   }
-
+  xmlRecList1Loader.classList.remove("showLoader")
   return models?.map(({ id, name }) => ({
     id,
     name,
@@ -392,6 +405,7 @@ async function getModelIdRecommend(query) {
 }
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
+	  xmlRecList1Loader.classList.add("showLoader")
     await downloadXml(xmlDownloadInput.value.trim());
   }
 }
