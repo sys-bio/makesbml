@@ -34,7 +34,7 @@ const procSBMLBtn = document.getElementById("procSBMLBtn");
 const xmlDownloadButton = document.querySelector("#xml-download-wrapper button")
 const xmlImportButton = document.querySelector("#xml-import-wrapper button")
 const xmlRecList1Loader = document.getElementById("loader-list1");
-const xmlRecList2Loader = document.getElementById("loader-list2");
+//const xmlRecList2Loader = document.getElementById("loader-list2");
 const xmlDownloadInput = document.getElementById("xml-id-search-input1");
 const xmlRecList1 = document.getElementById("xml-1-rec");
 
@@ -70,15 +70,21 @@ window.onload = function() {
     xmlRecList1.style.display = "block";
     e.stopPropagation();
   });
-  xmlDownloadInput.addEventListener("keyup", async (e) => {
-    const searchText = e.target.value.trim();
+  
+  function delay(fn, ms) { // use to delay event from triggering.
+   let timer = 0
+   return function(...args) {
+     clearTimeout(timer)
+     timer = setTimeout(fn.bind(this, ...args), ms || 0)
+   }
+  }
 
-   // if (searchText.length <= 1) {
+  async function processkeySearch(e) {
+    const searchText = e.target.value.trim();
 	if (searchText.length <= 3) { // 3 chars before start search
       xmlRecList1.innerHTML = "";
       return;
     }
-
     xmlRecList1Loader.classList.add("showLoader")
     let recommends = await getModelIdRecommend(searchText);
     const handleSelection = (e) => {
@@ -86,7 +92,6 @@ window.onload = function() {
       const text = e.target.innerText;
       xmlDownloadInput.value = text.split(": ").slice(-1);
     };
-//log('recommends? length: ', recommends?.length);
     if (recommends?.length) {
 	   var numb = 0;
       xmlRecList1.innerHTML = "";
@@ -96,12 +101,18 @@ window.onload = function() {
         xmlRecList1.append(createRecItem(rec, handleSelection));
 		numb+=1;
       }
-	  log('Number of models in xmlRecList1');
-	  log(numb);
+	 // log('Number of models in xmlRecList1');
+	 // log(numb);
     }
     xmlRecList1Loader.classList.remove("showLoader")
 
-  });
+  };
+
+  // Do not start processing user search until at least 1000 ms has elapsed.
+  // We want to reduce the number of searches and speed up populating result list.
+  xmlDownloadInput.addEventListener("keyup", async (e) => {
+     delay(processkeySearch(e), 1000);});  
+  
  
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
@@ -113,7 +124,6 @@ window.onload = function() {
   xmlDownloadButton
     .addEventListener("click", handleDownloadModel);
 
-
   inputFile.addEventListener("change", function() {
     var fr = new FileReader();
     fr.onload = function() {
@@ -123,6 +133,7 @@ window.onload = function() {
     fr.readAsText(this.files[0]);
   });
 };
+
 // Load library functions (asynchronous call):
 function initLoad() {
   try {
