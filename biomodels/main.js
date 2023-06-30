@@ -71,13 +71,13 @@ window.onload = function() {
     xmlRecList1.style.display = "block";
     e.stopPropagation();
   });
-  
+    
   function delay(fn, ms) { // use to delay event from triggering.
-   let timer = 0
-   return function(...args) {
+    let timer = 0
+    return function(...args) {
      clearTimeout(timer)
      timer = setTimeout(fn.bind(this, ...args), ms || 0)
-   }
+    }
   }
 
   async function processkeySearch(e) {
@@ -86,7 +86,6 @@ window.onload = function() {
       xmlRecList1.innerHTML = "";
       return;
     }
-    xmlRecList1Loader.classList.add("showLoader")
     let recommends = await getModelIdRecommend(searchText);
     const handleSelection = (e) => {
       e.preventDefault();
@@ -105,7 +104,6 @@ window.onload = function() {
 	 // log('Number of models in xmlRecList1');
 	 // log(numb);
     }
-    xmlRecList1Loader.classList.remove("showLoader")
 
   };
 
@@ -113,7 +111,6 @@ window.onload = function() {
   // We want to reduce the number of searches and speed up populating result list.
   xmlDownloadInput.addEventListener("keyup", async (e) => {
      delay(processkeySearch(e), 1000);});  
-  
  
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
@@ -177,7 +174,7 @@ function initLoad() {
   }
 }
 
-function processAntimony() {
+async function processAntimony() {
   antCode = document.getElementById("antimonycode").value;
   clearPreviousLoads();
   //console.log("*** Antimony code: ",antCode);
@@ -215,14 +212,18 @@ async function processSBML() {
 }
 
 async function processFile(fileStr) {
+  if(fileStr.length > 1000000){
+    alert('Model file is very large and may take a minute or more to process!');
+  }
   try {
-	//  xmlRecList1Loader.classList.add("showLoader");
+	clearPreviousLoads;
     var ptrFileStr = jsAllocateUTF8(fileStr);
     if (loadAntimonyString(ptrFileStr) > 0) {
       antTextArea.value = fileStr;
       procSBMLBtn.disabled = true;
       sbmlTextArea.value = "[SBML code here.]";
-      processAntimony();
+      await processAntimony();
+	  xmlRecList1Loader.classList.remove("showLoader");// added in inputFile.addEventListener("change" )
     } else if (loadSBMLString(ptrFileStr) > 0) {
       sbmlTextArea.value = fileStr;
       procAntimonyBtn.disabled = true;
@@ -297,7 +298,7 @@ function isValidUrl(str) {
 }
 
 async function importXml(modelId, fileName) {
-  //const proxy = " https://api.allorigins.win/raw?url=";
+  clearPreviousLoads;
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}?filename=${fileName}`;
 // Ex: https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000444?filename=BIOMD0000000444_url.xml
   if (isValidUrl(apiUrl)) {
@@ -308,12 +309,13 @@ async function importXml(modelId, fileName) {
         // console.log(data.description);
         sbmlTextArea.value = data;
 		processSBML(); // generate antimony version
+		xmlRecList1Loader.classList.remove("showLoader")
       })
       .catch((err) => console.error(err));
   } else {
     alert("Invalid Model ID");
   }
-  xmlRecList1Loader.classList.remove("showLoader")
+  
 }
 
 async function processJSONModelInfo(modelId,modelInfoJSON) {
@@ -340,19 +342,19 @@ async function downloadXml(modelId) {
  // const proxy = " https://api.allorigins.win/raw?url=";
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
   //log(apiUrl);
-  xmlRecList1Loader.classList.add("showLoader")
   if (isValidUrl(apiUrl)) {
+	xmlRecList1Loader.classList.add("showLoader");
     await fetch(proxy + apiUrl)
 	  .then((response) => response.json())
       .then((data) => {
 		 // log(data);
 		  processJSONModelInfo(modelId, data);
+		  xmlRecList1Loader.classList.remove("showLoader");
       })
       .catch((err) => console.error(err));
   } else {
     alert("Invalid Model ID");
   }
-  xmlRecList1Loader.classList.remove("showLoader")
 }
 
 async function processUserQuery(queryStr) {
@@ -388,6 +390,7 @@ async function getModelIdRecommend(query) {
       })
       .then((data) => {
         // log("request 2 complete")
+		xmlRecList1Loader.classList.remove("showLoader")
         (models = data.models)
       })
       .catch(err => {
@@ -397,7 +400,6 @@ async function getModelIdRecommend(query) {
   } else {
     alert("Invalid url");
   }
-  xmlRecList1Loader.classList.remove("showLoader")
   return models?.map(({ id, name }) => ({
     id,
     name,
