@@ -1,6 +1,6 @@
-# makesbml website
+# MakeSBML website
 
-Use the following url to try out the makesbml site:
+Use the following url to try out the makeSBML site:
 
 https://sys-bio.github.io/makesbml/
 
@@ -17,4 +17,5 @@ Project structure
 - others, as needed. 
 
 ## Antimony javascript library
-Please see the libantmonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying libantimony.js for use on this site.
+This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimoy to SBML and vice-versa. These two files are libantimony.js and libantimony.wasm. 
+Please see the libantmonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying libantimony.js and libantimony.wasm files for use on this site.
