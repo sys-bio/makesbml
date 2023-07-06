@@ -16,5 +16,5 @@ Project structure
 - `src` directory: Any files needed to build web site (main files, index and style are at the top level, so src directory),
 - others, as needed. 
 
-Antimony javascript library
+## Antimony javascript library
 Please see the libantmonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying libantimony.js for use on this site.
