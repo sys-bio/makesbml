@@ -1,312 +1,103 @@
-
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<script src="antimony/libantimony.js" type="text/javascript"></script>
-<script src="antimony/libantimony.wasm" type="application/wasm"> </script>
-<link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="antimony/libantimony.js" type="text/javascript"></script>
+  <script src="antimony/libantimony.wasm" type="application/wasm"> </script>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <title>Make SBML Models!</title>
 </head>
+
 <body>
-<!-- *** Page layout *** -->
-<nav>
-<h1>Make SBML Models!</h1>
-  <h3  align="center">When choosing a file you can pick an SBML or Antimony file to convert </h3>
-</nav>
+  <div id="app">
+    <nav>
+      <h1>Make SBML Models!</h1>
+	  <h3  align="center">When choosing a file you can pick an SBML or Antimony file to convert </h3>
+    </nav>
+	</br>
+  <div class="link-box"> 
+  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+        onclick="window.open('https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics','_blank')" value="Antimony information">
+  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+        onclick="window.open('https://sbml.org','_blank')"  value="SBML information"> 
+  </div> 
+  </br>
+    <div>
+      <div id="wrapper">
 
-<!-- <script type="text/javascript">
-document.getElementById('inputfile')
-.addEventListener('change', function () {
-var fr = new FileReader();
-fr.onload = function () {
-var modelString = fr.result;
-processFile(modelString);
-}
-fr.readAsText(this.files[0]);
-})
-</script> -->
-<br />
-<div class="link-box"> 
-<input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-onclick="window.location.href='https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics';" value="Antimony information">
-<input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-onclick="window.location.href='https://sbml.org';" value="SBML information">
-</div> <!-- mine -->
-<div id="wrapper">
+        <div id="antimony-code-wrapper">
+          <input type="file" name="inputfile" id="inputfile"> </br>
+          <textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
+            placeholder="[Antimony code here.]">	
+# Sample Antimony model:
+J0: S1 -> S2 + S3; k1*S1 # Mass-action kinetics
+J1: S2 -> S3 + S4; k2*S2 
+		
+S1 = 10 # The initial concentration of S1
+S2 = 0  # The initial concentration of S3
+S3 = 3  # The initial concentration of S3
+S4 = 0  # The initial concentration of S4
+			
+k1 = 0.1 # The value of the kinetic parameter from J0.
+k2 = 0.2 # The value of the kinetic parameter from J1.
+			</textarea>
 
-<div id="antimony-code-wrapper">
+          <div class="input-wrapper">
+            <input type="button" id="saveAntimonyBtn" style="background-color:#293D56;color:white;"
+              value="Save Antimony to file">
 
-<input type="file" name="inputfile" id="inputfile"><br />
-<textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
-placeholder="[Antimony code here]">
- # Sample Antimony model:
- J0: S1 -> S2 + S3; k1*S1 # Mass-action kinetics
- J1: S2 -> S3 + S4; k2*S2 
-  
- S1 = 10 # The initial concentration of S1
- S2 = 0  # The initial concentration of S3
- S3 = 3  # The initial concentration of S3
- S4 = 0  # The initial concentration of S4
-  
- k1 = 0.1 # The value of the kinetic parameter from J0.
- k2 = 0.2 # The value of the kinetic parameter from J1.
- </textarea>
-<div class="input-wrapper">
-<input type="button" id="saveAntimonyBtn"
-style="background-color:#293D56;color:white;"
-onclick="saveCode('antimony')" value="Save Antimony to file">
-<input type="button" id="copyAntimonyBtn"
-style="background-color:#293D56;color:white;"
-onclick="copyToClipboard('antimony')" value="Copy Antimony to clipboard">
-</div>
-</div>
-<div id="convert-btn-wrapper">
-<button id="procAntimonyBtn" onclick="processAntimony()" >&gt;</button>
-<button id="procSBMLBtn" onclick="processSBML()" >&lt;</button>
-</div>
-<div id="sbml-code-wrapper">
-<div id="xml-id-wrapper"> <div id="xml-download-wrapper">
-<!-- <input id="xml-id-input1" placeholder="Input bio model id ..."></input><button>Download</button> -->
-</div> 
-<div id="xml-import-wrapper">
-<!-- <input id="xml-id-input2" placeholder="Input bio model id ..."></input><button>Import</button> -->
-</div> 
-</div> <br />
-<textarea id="sbmlcode" rows="20" cols="80" maxlength="10000000" placeholder="[SBML code here.]"></textarea>
-<div class="input-wrapper">
-<input type="button" id="saveSBMLBtn" style="background-color:#293D56;color:white;"
-onclick="saveCode('sbml')"
-value="Save SBML to file">
-<input type="button" id="copySBMLBtn" style="background-color:#293D56;color:white;"
-onclick="copyToClipboard('sbml')" value="Copy SBML to clipboard">
-</div>
-</div>
-</div>
+            <input type="button" id="copyAntimonyBtn" style="background-color:#293D56;color:white;"
+              value="Copy Antimony to clipboard">
+          </div>
 
-<script type="text/javascript">
-var antCode;
-var sbmlCode;
-var sbmlResult = 'None';
-var antResult = 'None';
-var loadAntimonyString; // libantimony function
-var loadString;     // "
-var loadSBMLString; // "
-var getSBMLString;  // "
-var getAntimonyString; // "
-var getCompSBMLString; // "
-var clearPreviousLoads; // "
-var getLastError; // "
-var getWarnings; // "
-var getSBMLInfoMessages;// "
-var getSBMLWarnings; // "
-var freeAll; // "
-var free; // emscripten function
-var jsAllocateUTF8; // "
-console.log(libantimony);
-// Load library functions (asynchronous call):
-try {
-libantimony().then((libantimony) => {
-// Format: libantimony.cwrap( function name, return type, input param array of types).
-loadString = libantimony.cwrap('loadString', 'number', ['number']);
-loadAntimonyString = libantimony.cwrap('loadAntimonyString', 'number', ['number']);
-loadSBMLString = libantimony.cwrap('loadSBMLString', 'number', ['number']);
-getSBMLString = libantimony.cwrap('getSBMLString', 'string', ['null']);
-getAntimonyString = libantimony.cwrap('getAntimonyString', 'string', ['null']);
-getCompSBMLString = libantimony.cwrap('getCompSBMLString', 'string', ['string']);
-clearPreviousLoads = libantimony.cwrap('clearPreviousLoads', 'null', ['null']);
-getLastError = libantimony.cwrap('getLastError', 'string', ['null']);
-getWarnings = libantimony.cwrap('getWarnings', 'string', ['null']);
-getSBMLInfoMessages = libantimony.cwrap('getSBMLInfoMessages', 'string', ['string']);
-getSBMLWarnings = libantimony.cwrap('getSBMLWarnings', 'string', ['string']);
-freeAll = libantimony.cwrap('freeAll', 'null', ['null']);
-jsFree = (strPtr) => libantimony._free(strPtr);
-jsAllocateUTF8 = (newStr) => libantimony.allocateUTF8(newStr);
-});
-}
-catch (err) {
-console.log('Load libantimony error: ', err);
-}
-</script>
-<script type="text/javascript">
-function processAntimony() {
-antCode = document.getElementById("antimonycode").value;
-clearPreviousLoads();
-//console.log("*** Antimony code: ",antCode);
-var ptrAntCode = jsAllocateUTF8(antCode);
-var load_int = loadAntimonyString(ptrAntCode);
-console.log("processAntimony: int returned: ", load_int);
-if (load_int > 0) {
-sbmlResult = getSBMLString();
-document.getElementById("sbmlcode").value = sbmlResult;
-document.getElementById("procSBMLBtn").disabled = false;
-document.getElementById("copySBMLBtn").disabled = false;
-document.getElementById("saveSBMLBtn").disabled = false;
-}
-else {
-var errStr = getLastError();
-window.alert(errStr);
-}
-jsFree(ptrAntCode);
-}
-function processSBML() {
-sbmlCode = document.getElementById("sbmlcode").value;
-clearPreviousLoads();
-var ptrSBMLCode = jsAllocateUTF8(sbmlCode);
-var load_int = loadSBMLString(ptrSBMLCode);
-console.log("processSBML: int returned: ", load_int);
-if (load_int > 0) {
-antResult = getAntimonyString();
-document.getElementById("antimonycode").value = antResult;
-document.getElementById("procAntimonyBtn").disabled = false;
-document.getElementById("copyAntimonyBtn").disabled = false;
-document.getElementById("saveAntimonyBtn").disabled = false;
-}
-else {
-var errStr = getLastError();
-window.alert(errStr);
-}
-jsFree(ptrSBMLCode);
-}
-function processFile(fileStr) {
-//console.log('Loaded Model str: ', fileStr);
-if(fileStr.length > 1000000){
-  alert('Model file is very large and may take a minute or more to process!');
-}
-try {
-var ptrFileStr = jsAllocateUTF8(fileStr);
-if (loadAntimonyString(ptrFileStr) > 0) {
-document.getElementById("antimonycode").value = fileStr;
-document.getElementById("procSBMLBtn").disabled = true;
-document.getElementById("sbmlcode").value = "[SBML code here.]";
-processAntimony();
-}
-else if (loadSBMLString(ptrFileStr) > 0) {
-document.getElementById("sbmlcode").value = fileStr;
-document.getElementById("procAntimonyBtn").disabled = true;
-document.getElementById("antimonycode").value = "[Antimony code here.]";
-processSBML();
-}
-else {
-var errStr = getLastError();
-window.alert(errStr);
-clearPreviousLoads();
-}
-}
-catch (err) {
-console.log('processing file error: :', err);
-window.alert(err);
-}
-jsFree(ptrFileStr);
-}
-function copyToClipboard(copyType) {
-var copyText;
-if (copyType == 'antimony') {
-copyText = document.getElementById("antimonycode");
-}
-else {
-copyText = document.getElementById("sbmlcode");
-}
-// Select the text field
-copyText.select();
-copyText.setSelectionRange(0, 99999); // For mobile devices
-// Copy the text inside the text field
-navigator.clipboard.writeText(copyText.value);
-}
-function saveCode(codeType) {
-var fileExt;
-if (codeType == 'antimony') {fileExt = ".txt";}
-else {fileExt = '.xml';}
-if (promptFilename = prompt("Save file as (" + fileExt + ") ", "")) {
-var textBlob;
-if (codeType == 'antimony') {
-textBlob = new Blob([document.getElementById("antimonycode").value], {type:
-'text/plain'});
-}
-else textBlob = new Blob([document.getElementById("sbmlcode").value], {type:
-'text/plain'});
-var downloadLink = document.createElement("a");
-downloadLink.download = promptFilename + fileExt;
-downloadLink.innerHTML = "Download File";
-downloadLink.href = window.URL.createObjectURL(textBlob);
-downloadLink.click();
-delete downloadLink;
-delete textBlob;
-}
-}
-function isValidUrl(str) {
-const pattern = new RegExp(
-'^([a-zA-Z]+:\\/\\/)?' + // protocol
-'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-'((\\d{1,3}\\.){3}\\d{1,3}))' + // OR IP (v4) address
-'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-'(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-'(\\#[-a-z\\d_]*)?$', // fragment locator
-'i'
-);
-return pattern.test(str);
-}
-let {log} = console;
-async function downloadXml(modelId) {
-const proxy = " https://api.allorigins.win/raw?url="
-const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}`;
-if (isValidUrl(apiUrl)) {
-await fetch(proxy + apiUrl)
-.then(response => response.blob())
-.then(blob => {
-var file = window.URL.createObjectURL(blob);
-window.location.assign(file);
-})
-.catch(err => console.error(err));
-}
-else {
-alert("Invalid Model ID");
-}
-}
-async function importXml(modelId, format) {
-const proxy = " https://api.allorigins.win/raw?url="
-const apiUrl = `https://www.ebi.ac.uk/biomodels/${modelId}?format=${format}`;
-let data = "";
-const headers = {
-'Content-Type': 'application/xml',
-}
-if (isValidUrl(apiUrl)) {
-await fetch(proxy + apiUrl, headers)
-.then(response => response.text())
-.then(data => {
-sbmlTextArea.value = data;
-})
-.catch(err => console.error(err));
-// log(data)
-// return data;
-}
-else {
-alert("Invalid Model ID");
-}
-}
-const xmlDownloadInput = document.getElementById("xml-id-input1");
-const xmlImportInput = document.getElementById("xml-id-input2");
-const sbmlTextArea = document.getElementById("sbmlcode");
-async function handleDownloadModel() {
-if (xmlDownloadInput.value.length > 1) {
-await downloadXml(xmlDownloadInput.value)
-}
-}
-async function handleImportModel() {
-if (xmlImportInput.value.length > 1) {
-await importXml(xmlImportInput.value, "json");
-}
-}
-document.getElementById("xml-download-wrapper").addEventListener("click",
-handleDownloadModel)
-document.getElementById("xml-import-wrapper").addEventListener("click",
-handleImportModel)
-document.getElementById('inputfile')
-.addEventListener('change', function () {
-var fr = new FileReader();
-fr.onload = function () {
-var modelString = fr.result;
-processFile(modelString);
-}
-fr.readAsText(this.files[0]);
-})
-</script>
+        </div>
+       
+        <div id="convert-btn-wrapper">
+          <button id="procAntimonyBtn" value="Convert Antimony to SBML">→</button>
+          <button id="procSBMLBtn">←</button>
+        </div>  
+        <div id="sbml-code-wrapper">
+
+          <div id="xml-id-wrapper">
+            <div id="xml-download-wrapper">
+              <div id='xml-download-search'>
+                <input autocomplete="off" id="xml-id-search-input1" placeholder="Search BioModels... Ex: sodium Whitcomb">
+                <div class="loader" id="loader-list1"></div>
+                </input>
+                <button> Download </button>
+              </div>
+
+              <div id="rec1-wrapper">
+                <ul id="xml-1-rec">
+                </ul>
+              </div>
+            </div>
+            <div id="xml-import-wrapper">
+             <!-- <div id="xml-import-search"> -->
+            <!--  </div> -->
+              <div id="rec2-wrapper">
+			   <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
+			    onclick="window.open('https://www.ebi.ac.uk/biomodels/','_blank')" value="BioModels information">
+              </div>
+            </div>
+          </div>
+          </br>
+          <textarea id="sbmlcode" rows="20" cols="80" maxlength="2000000" placeholder="[SBML code here.]"></textarea>
+          <div class="input-wrapper" >
+            <input type="button" id="saveSBMLBtn" style="background-color:#293D56;color:white;"
+              value="Save SBML to file">
+            <input type="button" id="copySBMLBtn" style="background-color:#293D56;color:white;"
+              value="Copy SBML to clipboard">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" src="main.js"></script>
 </body>
+
 </html>
