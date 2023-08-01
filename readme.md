@@ -1,4 +1,4 @@
-# MakeSBML website
+# makeSBML website
 
 Use the following url to try out the makeSBML site:
 
