@@ -13,8 +13,7 @@ Project structure
 - `docs` directory: documentation (none currently)
 - `antimony` directory: contains libantimony.js and libantimony.wasm files.
 - `test` directory: Test models and test web page. Currently unused.
-- `src` directory: Any files needed to build web site (main files, index and style are at the top level, so src directory),
-- others, as needed. 
+- `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. 
 
 ## Antimony javascript library
 This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimony to SBML and vice-versa. These two files are libantimony.js and libantimony.wasm. 
