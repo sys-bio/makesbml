@@ -400,7 +400,7 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
  
 }
 
-async function downloadXml2(modelId) {
+async function downloadXml(modelId) {
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
   const modelFileName = modelId + '_url.xml';
   importXml(modelId, modelFileName)
@@ -486,8 +486,7 @@ async function getModelIdRecommend(query) {
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
 	  xmlRecList1Loader.classList.add("showLoader")
-	await downloadXml2(xmlDownloadInput.value.trim());
-    //await downloadXml(xmlDownloadInput.value.trim());
+	await downloadXml(xmlDownloadInput.value.trim());
   }
 }
 
