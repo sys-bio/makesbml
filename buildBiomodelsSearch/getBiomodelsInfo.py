@@ -1,4 +1,9 @@
+# Create a json file containing Biomodels information to speed up search of Biomodels for MakeSBML.
+# Need following package:
 # pip install biomodels-restful-api-client 
+# Ref: https://bitbucket.org/biomodels/biomodels-resftful-api-client/src/main/ 
+
+# 'python getBiomodelsInfo.py'
 
 import json
 import re
