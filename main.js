@@ -52,7 +52,10 @@ window.onload = function() {
   procAntimonyBtn.addEventListener("click", processAntimony);
   procSBMLBtn.addEventListener("click", processSBML);
 
-  const createRecItem = ({ id, name }, onclickEvent) => {
+	const createRecItem = (id_nameMap, onclickEvent) => {    
+	const itr = id_nameMap.values();
+	const id = itr.next().value;
+	const name = itr.next().value;
     const maxNameLength = 50;
     let li = document.createElement("li");
     let a = document.createElement("a");
@@ -84,19 +87,21 @@ window.onload = function() {
       xmlRecList1.innerHTML = "";
       return;
     }
-    let recommends = await getModelIdRecommend(searchText);
+	log("processkeySearch(): ", e );
+    let recommends = await getModelIdRecommendNew(searchText);
     const handleSelection = (e) => {
       e.preventDefault();
       const text = e.target.innerText;
       xmlDownloadInput.value = text.split(": ").slice(-1);
     };
-    if (recommends?.length) {
+
+	if (recommends?.entries()) {
 	   var numb = 0;
       xmlRecList1.innerHTML = "";
-      recommends = recommends?.slice(0, maxRec);
+     // recommends = recommends?.slice(0, maxRec); // grab the first maxRec entries
       for (const rec of recommends) {
 		  // Chk if id starts with 'BIOMD'
-        xmlRecList1.append(createRecItem(rec, handleSelection));
+        xmlRecList1.append(createRecItem(rec, handleSelection)); // rec -> one Map entry (id, name)
 		numb+=1;
       }
 	 // log('Number of models in xmlRecList1');
@@ -279,7 +284,6 @@ function saveCode(codeType) {
     downloadLink.href = window.URL.createObjectURL(textBlob);
     downloadLink.click();
     // delete downloadLink;
-    // delete textBlob;
   }
 }
 function isValidUrl(str) {
@@ -293,6 +297,68 @@ function isValidUrl(str) {
     "i"
   );
   return pattern.test(str);
+}
+
+function checkIfInString(searchStr, queryAr, resultAr) {
+  for( let i=0; i < queryAr.length; i++) {
+	if(searchStr.toLowerCase().includes(queryAr[i].toLowerCase())) {
+	  resultAr[i] = true; }
+  }	  
+  return resultAr;	
+}
+
+async function getModelList(newQuery, jsonData) {
+  let queries;
+  if(newQuery != null) {
+    queries = newQuery.split(" "); }
+  else { newQuery = ''; queries = ''; }
+  let found = []; // keep track if queries are found.
+  
+  const results = new Map();
+  for (var model in jsonData) {
+	for(let i =0; i < queries.length; i++) {
+	  found[i] = false; }
+    for ( var key in jsonData[model]) {
+     // console.log(key)
+	  if (key == 'name') {
+	   // console.log(jsonData[model][key]);
+		found = checkIfInString(jsonData[model][key], queries, found);
+	  }
+	  else if (key == 'description') {
+		found = checkIfInString(jsonData[model][key], queries, found);
+	  }
+	  else if (key == 'publication') {
+		for (var key2 in jsonData[model][key]) {
+		  if(key2 == 'authors') {
+			for(var author in jsonData[model][key][key2]) {
+			 // console.log(jsonData[model][key][key2][author]['name']);
+			  found = checkIfInString(jsonData[model][key][key2][author]['name'], queries, found);
+			}				
+		  }
+		}			
+	  }
+	}
+	let save = 0;
+	for( let i =0; i < found.length ; i++) {
+	  if(found[i]) { save +=1; }	
+	} 
+	if (save == found.length){ results.set( model, jsonData[model]['name'] );}
+  }
+  return results;
+}
+
+async function getBiomodelsInfo(query) {
+	console.log('In getBiomodelsInfo()');
+	let models;
+	const apiUrl = '/makesbml/buildBiomodelsSearch/biomodelsinfo.json'
+	await fetch(apiUrl)
+     .then((response) => response.json())
+     .then((json) => {
+	//console.log(json);
+	 xmlRecList1Loader.classList.remove("showLoader")
+	 models = getModelList(query, json)
+	  });	
+	return models;
 }
 
 async function importXml(modelId, fileName) {
@@ -316,9 +382,7 @@ async function importXml(modelId, fileName) {
   
 }
 
-async function processJSONModelInfo(modelId,modelInfoJSON) {
-//console.log('Loaded JSON str: ', modelInfoJSON);
- 
+async function processJSONModelInfo(modelId,modelInfoJSON) { 
  try {
   const mainFilesList = modelInfoJSON.main 
   var curList = '';
@@ -336,6 +400,13 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
  
 }
 
+async function downloadXml2(modelId) {
+  const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
+  const modelFileName = modelId + '_url.xml';
+  importXml(modelId, modelFileName)
+}
+
+/*
 async function downloadXml(modelId) {
   const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
   //log(apiUrl);
@@ -353,6 +424,7 @@ async function downloadXml(modelId) {
     alert("Invalid Model ID");
   }
 }
+*/
 
 async function processUserQuery(queryStr) {
   let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);
@@ -368,7 +440,15 @@ async function processUserQuery(queryStr) {
   return searchQuery;	
 }
 
+async function getModelIdRecommendNew(query) {
+  const biomodelsQuery = await processUserQuery(query); 
+  const format = "json";
+  xmlRecList1Loader.classList.add("showLoader")
+ 
+  return getBiomodelsInfo(query);
+}
 
+/*
 async function getModelIdRecommend(query) {
   const biomodelsQuery = await processUserQuery(query); 
   const format = "json";
@@ -402,10 +482,12 @@ async function getModelIdRecommend(query) {
     name,
   }));
 }
+*/
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
 	  xmlRecList1Loader.classList.add("showLoader")
-    await downloadXml(xmlDownloadInput.value.trim());
+	await downloadXml2(xmlDownloadInput.value.trim());
+    //await downloadXml(xmlDownloadInput.value.trim());
   }
 }
 
