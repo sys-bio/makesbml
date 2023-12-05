@@ -10,9 +10,9 @@ Antimony (https://github.com/sys-bio/antimony). Antimony is a modular model defi
 
 
 Project structure
+- `root` directory: contains this file, index.html, style.css, main.js, and LICENSE files. main.js contains the main code for processing sbml and antimony model files and the Biomodels search and download functions.
 - `docs` directory: documentation (none currently)
 - `antimony` directory: contains libantimony.js and libantimony.wasm files.
-- `test` directory: Test models and test web page. Currently unused.
 - `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. 
 
 ## Antimony javascript library
