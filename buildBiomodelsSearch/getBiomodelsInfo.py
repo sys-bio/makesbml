@@ -16,7 +16,7 @@ def remove_html_tags(text):
     return re.sub(clean, '', text)
 
 
-totalModels = 1100
+totalModels = 2000
 i = 0
 modelIdentifiers = bmservices.get_model_identifiers()
 models = modelIdentifiers["models"]
