@@ -4,6 +4,8 @@ let { log } = console;
 let models = [];
 const maxRec = 15;
 const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
+const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
+
 var antCode;
 var sbmlCode;
 var sbmlResult = "None";
@@ -31,7 +33,7 @@ const copyAntimonyBtn = document.getElementById("copyAntimonyBtn");
 const procAntimonyBtn = document.getElementById("procAntimonyBtn");
 const procSBMLBtn = document.getElementById("procSBMLBtn");
 
-const xmlDownloadButton = document.querySelector("#xml-download-wrapper button")
+//const xmlDownloadButton = document.querySelector("#xml-download-wrapper button")
 const xmlImportButton = document.querySelector("#xml-import-wrapper button")
 const xmlRecList1Loader = document.getElementById("loader-list1");
 const xmlDownloadInput = document.getElementById("xml-id-search-input1");
@@ -83,7 +85,7 @@ window.onload = function() {
 
   async function processkeySearch(e) {
     const searchText = e.target.value.trim();
-	if (searchText.length <= 3) { // 3 chars before start search
+	if (searchText.length < 3) { // 2 chars before start search
       xmlRecList1.innerHTML = "";
       return;
     }
@@ -93,6 +95,9 @@ window.onload = function() {
       e.preventDefault();
       const text = e.target.innerText;
       xmlDownloadInput.value = text.split(": ").slice(-1);
+	  // Call handleDownloadModel() here:
+	  handleDownloadModel(); // view biomodel that user selected.
+	  //log('HandleSelection()');
     };
 
 	if (recommends?.entries()) {
@@ -122,8 +127,8 @@ window.onload = function() {
     xmlRecList1.style.display = "none";
   };
 
-  xmlDownloadButton
-    .addEventListener("click", handleDownloadModel);
+  //xmlDownloadButton
+  //  .addEventListener("click", handleDownloadModel);
 
   inputFile.addEventListener("change", function() {
     var fr = new FileReader();
@@ -279,11 +284,14 @@ function saveCode(codeType) {
         type: "text/plain",
       });
     var downloadLink = document.createElement("a");
-    downloadLink.download = promptFilename + fileExt;
+	if( promptFilename.includes(fileExt) ) {
+	  downloadLink.download = promptFilename; }
+	else { downloadLink.download = promptFilename + fileExt; }
+   
     downloadLink.innerHTML = "Download File";
     downloadLink.href = window.URL.createObjectURL(textBlob);
     downloadLink.click();
-    // delete downloadLink;
+    
   }
 }
 function isValidUrl(str) {
@@ -350,8 +358,8 @@ async function getModelList(newQuery, jsonData) {
 async function getBiomodelsInfo(query) {
 	console.log('In getBiomodelsInfo()');
 	let models;
-	const apiUrl = '/makesbml/buildBiomodelsSearch/biomodelsinfo.json'
-	await fetch(apiUrl)
+	//const apiUrl = '/makesbml/buildBiomodelsSearch/biomodelsinfo.json'
+	await fetch(biomodelsInfoURL)
      .then((response) => response.json())
      .then((json) => {
 	//console.log(json);
@@ -405,26 +413,6 @@ async function downloadXml(modelId) {
   const modelFileName = modelId + '_url.xml';
   importXml(modelId, modelFileName)
 }
-
-/*
-async function downloadXml(modelId) {
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
-  //log(apiUrl);
-  if (isValidUrl(apiUrl)) {
-	xmlRecList1Loader.classList.add("showLoader");
-    await fetch(proxy + apiUrl)
-	  .then((response) => response.json())
-      .then((data) => {
-		 // log(data);
-		  processJSONModelInfo(modelId, data);
-		  xmlRecList1Loader.classList.remove("showLoader");
-      })
-      .catch((err) => console.error(err));
-  } else {
-    alert("Invalid Model ID");
-  }
-}
-*/
 
 async function processUserQuery(queryStr) {
   let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);

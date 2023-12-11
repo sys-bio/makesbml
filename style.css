@@ -129,7 +129,7 @@ input[type="file"]::file-selector-button,
 #xml-import-search {
   display: flex;
   gap: 5px;
-  
+  height: 30px;
 }
 
 .showLoader {
