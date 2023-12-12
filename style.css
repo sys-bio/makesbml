@@ -53,6 +53,15 @@ height: 80vh;
  flex-direction: row;  
  justify-content: center;
 }
+
+.about-box{
+ height: 2vh; 
+ display: flex; 
+ align-items: center;
+ flex-direction: row;  
+ justify-content: center;	
+}
+
 #antimony-code-wrapper, #sbml-code-wrapper{
 display: flex;
 flex-direction: column;
@@ -86,6 +95,20 @@ border: 2px solid white;
 
 }
 
+.about-btn{
+padding: 5px;
+background-color:#293D56;
+color:white
+z-index: 1000;
+height: 30px;
+border-radius: 6px;
+}
+
+.about-btn:focus{
+
+border: 2px solid white;
+
+}
 
 #convert-btn-wrapper{
 display: flex;

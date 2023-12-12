@@ -5,6 +5,7 @@ let models = [];
 const maxRec = 15;
 const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
 const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
+const makeSBMLinfo = "MakeSBML version 1.0.\nCopyright 2023, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
 var sbmlCode;
@@ -32,6 +33,7 @@ const saveAntimonyBtn = document.getElementById("saveAntimonyBtn");
 const copyAntimonyBtn = document.getElementById("copyAntimonyBtn");
 const procAntimonyBtn = document.getElementById("procAntimonyBtn");
 const procSBMLBtn = document.getElementById("procSBMLBtn");
+const aboutBtn = document.getElementById("aboutBtn");
 
 //const xmlDownloadButton = document.querySelector("#xml-download-wrapper button")
 const xmlImportButton = document.querySelector("#xml-import-wrapper button")
@@ -95,9 +97,8 @@ window.onload = function() {
       e.preventDefault();
       const text = e.target.innerText;
       xmlDownloadInput.value = text.split(": ").slice(-1);
-	  // Call handleDownloadModel() here:
+	  document.getElementById("sbmlcode").value = '[SBML code here.]'; // Clear out old model 
 	  handleDownloadModel(); // view biomodel that user selected.
-	  //log('HandleSelection()');
     };
 
 	if (recommends?.entries()) {
@@ -109,8 +110,6 @@ window.onload = function() {
         xmlRecList1.append(createRecItem(rec, handleSelection)); // rec -> one Map entry (id, name)
 		numb+=1;
       }
-	 // log('Number of models in xmlRecList1');
-	 // log(numb);
     }
 
   };
@@ -122,7 +121,8 @@ window.onload = function() {
  
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
-
+  aboutBtn.addEventListener("click", (_) => showAbout());  
+  
   document.body.onclick = (e) => {
     xmlRecList1.style.display = "none";
   };
@@ -476,6 +476,11 @@ async function handleDownloadModel() {
 	  xmlRecList1Loader.classList.add("showLoader")
 	await downloadXml(xmlDownloadInput.value.trim());
   }
+}
+
+async function showAbout() {
+	
+	window.alert(makeSBMLinfo);
 }
 
 

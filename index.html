@@ -21,12 +21,12 @@
   <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
         onclick="window.open('https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics','_blank')" value="Antimony information">
   <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-        onclick="window.open('https://sbml.org','_blank')"  value="SBML information"> 
+        onclick="window.open('https://sbml.org','_blank')"  value="SBML information">   
   </div> 
+ 
   </br>
     <div>
       <div id="wrapper">
-
         <div id="antimony-code-wrapper">
           <input type="file" name="inputfile" id="inputfile"> </br>
           <textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
@@ -51,7 +51,6 @@ k2 = 0.2 # The value of the kinetic parameter from J1.
             <input type="button" id="copyAntimonyBtn" style="background-color:#293D56;color:white;"
               value="Copy Antimony to clipboard">
           </div>
-
         </div>
        
         <div id="convert-btn-wrapper">
@@ -75,9 +74,8 @@ k2 = 0.2 # The value of the kinetic parameter from J1.
               </div>
             </div>
             <div id="xml-import-wrapper">
-             <!-- <div id="xml-import-search"> -->
-            <!--  </div> -->
               <div id="rec2-wrapper">
+			  
 			   <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
 			    onclick="window.open('https://www.ebi.ac.uk/biomodels/','_blank')" value="BioModels information">
               </div>
@@ -95,7 +93,9 @@ k2 = 0.2 # The value of the kinetic parameter from J1.
         </div>
       </div>
     </div>
-
+    <div class="about-box">
+      <input type="button" id="aboutBtn" class="about-btn" style="background-color:#293D56;color:white;" value="About">
+    <div>
   </div>
   <script type="module" src="main.js"></script>
 </body>
