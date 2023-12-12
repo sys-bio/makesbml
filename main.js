@@ -284,7 +284,7 @@ function saveCode(codeType) {
         type: "text/plain",
       });
     var downloadLink = document.createElement("a");
-	if( promptFilename.includes(fileExt) ) {
+	if( promptFilename.includes(fileExt) || promptFilename.includes(".sbml") ) {
 	  downloadLink.download = promptFilename; }
 	else { downloadLink.download = promptFilename + fileExt; }
    
