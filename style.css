@@ -24,6 +24,16 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 height: 70%;
 resize: horizontal;
 }
+
+input:focus {
+border: 3px solid white;	
+}
+
+select:focus {
+border: 3px solid white;
+}
+
+
 #procAntimonyBtn, #procSBMLBtn{
 background-color: #293D56;
 color: white;
@@ -31,14 +41,24 @@ border: none;
 outline: none;
 font-size: 25px;
 /* position: absolute; */
-width: 50px;
-height: 40px;
+width: 36px;
+height: 36px;
 /* border-radius: 50%; */
 border-radius: 10px;
 text-align: center;
+
 /* left: 50%;
 transform: translate(-50%, -50%); */
 }
+
+#procAntimonyBtn:focus {
+border: 3px solid white;	
+}
+#procSBMLBtn:focus {
+border: 3px solid white;	
+}
+
+
 #wrapper{
 position: relative;
 display: flex;
@@ -89,11 +109,6 @@ height: 30px;
 border-radius: 6px;
 }
 
-.link-btn:focus{
-
-border: 2px solid white;
-
-}
 
 .about-btn{
 padding: 5px;
@@ -102,12 +117,6 @@ color:white
 z-index: 1000;
 height: 30px;
 border-radius: 6px;
-}
-
-.about-btn:focus{
-
-border: 2px solid white;
-
 }
 
 #convert-btn-wrapper{
