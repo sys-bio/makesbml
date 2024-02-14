@@ -5,7 +5,7 @@ let models = [];
 const maxRec = 15;
 const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
 const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
-const makeSBMLinfo = "MakeSBML version 1.0.\nCopyright 2023, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
+const makeSBMLinfo = "MakeSBML version 1.1.\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
 var sbmlCode;
@@ -127,8 +127,6 @@ window.onload = function() {
     xmlRecList1.style.display = "none";
   };
 
-  //xmlDownloadButton
-  //  .addEventListener("click", handleDownloadModel);
 
   inputFile.addEventListener("change", function() {
     var fr = new FileReader();
@@ -182,7 +180,7 @@ function initLoad() {
   }
 }
 
-async function processAntimony() {
+async function processAntimony() { // Generate SBML version.
   antCode = document.getElementById("antimonycode").value;
   clearPreviousLoads();
   //console.log("*** Antimony code: ",antCode);
@@ -200,7 +198,7 @@ async function processAntimony() {
   }
   jsFree(ptrAntCode);
 }
-async function processSBML() {
+async function processSBML() { // Generate Antimony version
   sbmlCode = sbmlTextArea.value;
   clearPreviousLoads();
   var ptrSBMLCode = jsAllocateUTF8(sbmlCode);
@@ -315,7 +313,24 @@ function checkIfInString(searchStr, queryAr, resultAr) {
   return resultAr;	
 }
 
-async function getModelList(newQuery, jsonData) {
+	// modelId: biomodels id, jsonData: cached biomodels info in json format.
+async function getModelFileNameAndCallImportXML(modelId, jsonData) { 
+  let filename = '';
+  try {
+	filename = jsonData[modelId]['files']['main']['0']['name']; // assumes file we want is '0' record 
+	//console.log('getModelFileNameAndCallImportXML: ', filename);
+	await importXml(modelId, filename);
+  }
+  catch(err) {
+	filename = 'Not Found';
+	const errorStr = filename + ': NOT found!';
+    alert(errorStr);	
+  }
+  return filename;
+		
+}
+
+async function getModelList(newQuery, jsonData) { // Get list of biomodels that match user query
   let queries;
   if(newQuery != null) {
     queries = newQuery.split(" "); }
@@ -327,7 +342,6 @@ async function getModelList(newQuery, jsonData) {
 	for(let i =0; i < queries.length; i++) {
 	  found[i] = false; }
     for ( var key in jsonData[model]) {
-     // console.log(key)
 	  if (key == 'name') {
 	   // console.log(jsonData[model][key]);
 		found = checkIfInString(jsonData[model][key], queries, found);
@@ -343,19 +357,25 @@ async function getModelList(newQuery, jsonData) {
 			  found = checkIfInString(jsonData[model][key][key2][author]['name'], queries, found);
 			}				
 		  }
+		  // now search 'title':
+		  if(key2 == 'title') {
+			found = checkIfInString(jsonData[model][key][key2], queries, found);  
+		  }
 		}			
 	  }
 	}
 	let save = 0;
 	for( let i =0; i < found.length ; i++) {
 	  if(found[i]) { save +=1; }	
-	} 
+	} 	
 	if (save == found.length){ results.set( model, jsonData[model]['name'] );}
   }
   return results;
 }
 
-async function getBiomodelsInfo(query) {
+
+	// loads biomodels cache and returns models that match query
+async function getBiomodelsInfo(query) {  
 	console.log('In getBiomodelsInfo()');
 	let models;
 	//const apiUrl = '/makesbml/buildBiomodelsSearch/biomodelsinfo.json'
@@ -408,10 +428,16 @@ async function processJSONModelInfo(modelId,modelInfoJSON) {
  
 }
 
-async function downloadXml(modelId) {
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/model/files/${modelId}?format=json`;
-  const modelFileName = modelId + '_url.xml';
-  importXml(modelId, modelFileName)
+async function downloadBiomodelsSBML(modelId) { // grab SBML file from BioModels.
+
+  let modelFileName = '';
+  await fetch(biomodelsInfoURL)
+     .then((response) => response.json())
+     .then((json) => {
+	//console.log(json);
+	 modelFileName = getModelFileNameAndCallImportXML(modelId, json);
+	  });	
+ 
 }
 
 async function processUserQuery(queryStr) {
@@ -436,45 +462,10 @@ async function getModelIdRecommendNew(query) {
   return getBiomodelsInfo(query);
 }
 
-/*
-async function getModelIdRecommend(query) {
-  const biomodelsQuery = await processUserQuery(query); 
-  const format = "json";
-  xmlRecList1Loader.classList.add("showLoader")
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%20BIOMD%2A%26numResults=${maxRec}%26format=${format}`;
- // Only want model numbers starting with BIOMD: https://www.ebi.ac.uk/biomodels/search?query=sodium%20BIOMD%2A%26numResults=15%26format=json 
- // Should be something like this:`https://www.ebi.ac.uk/biomodels/search?query=${biomodelsQuery}%26curationstatus%3A%22Manually%20curated%22%26domain=biomodels%26numResults=${maxRec}%26format=${format}`
- 
-  let models;
-  if (isValidUrl(apiUrl)) {
-    //log("fetching...", apiUrl)
-    await fetch(proxy + apiUrl)
-      .then((response) => {
-        //log("request 1 complete")
-        return response.json()
-      })
-      .then((data) => {
-        // log("request 2 complete")
-		xmlRecList1Loader.classList.remove("showLoader")
-        (models = data.models)
-      })
-      .catch(err => {
-		  //log('Nothing returned from query');
-        if (err instanceof TypeError) return []
-      });
-  } else {
-    alert("Invalid url");
-  }
-  return models?.map(({ id, name }) => ({
-    id,
-    name,
-  }));
-}
-*/
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
 	  xmlRecList1Loader.classList.add("showLoader")
-	await downloadXml(xmlDownloadInput.value.trim());
+	await downloadBiomodelsSBML(xmlDownloadInput.value.trim());
   }
 }
 
