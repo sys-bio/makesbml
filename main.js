@@ -5,7 +5,8 @@ let models = [];
 const maxRec = 15;
 const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
 const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
-const makeSBMLinfo = "MakeSBML version 1.1.\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
+const makeSBMLversion = "MakeSBML version 1.2. ";
+const makeSBMLinfo = makeSBMLversion + "\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
 var sbmlCode;

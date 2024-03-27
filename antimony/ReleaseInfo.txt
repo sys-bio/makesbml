@@ -1,6 +1,14 @@
-libantimonyjs release 2.14
+libantimonyjs release 2.14b
 libSBML source- 5.20.0
 Antimony source- 2.14
 Emscripten version- 3.1.20
-Following methods are available- From Antimony library - _loadString, _loadAntimonyString, _loadSBMLString, _clearPreviousLoads, _getAntimonyString, _freeAll, _getSBMLString, _getCompSBMLString, _getLastError, _getWarnings, _getSBMLInfoMessages, _getSBMLWarnings.
+
+Release Notes: 
+- This release adds antimony_wrap.js file which simplifies the use of libantimonyjs. 
+- The libantimony.wasm is removed and incorporated into the libantimony.js.
+- Antimony is built with -DCMAKE_BUILD_TYPE=Release flag set, previously no build type flag was set so default was debug.
+
+Following methods are ported from Antimony library: _loadString, _loadAntimonyString, _loadSBMLString, _clearPreviousLoads, _getAntimonyString, _freeAll, _getSBMLString, _getCompSBMLString, _getLastError, _getWarnings, _getSBMLInfoMessages, _getSBMLWarnings.
 From Emscripten - _malloc, _free, ccall, cwrap, allocateUTF8, UTF8ToString.
+
+
