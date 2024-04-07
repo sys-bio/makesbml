@@ -1,11 +1,12 @@
-let { log } = console;
 
+import {getModel} from "./buildBiomodelsSearch/getBiomodels.js";
+let { log } = console;
 
 let models = [];
 const maxRec = 15;
-const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
+//const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
 const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
-const makeSBMLversion = "MakeSBML version 1.2. ";
+const makeSBMLversion = "MakeSBML version 1.3. ";
 const makeSBMLinfo = makeSBMLversion + "\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
@@ -320,11 +321,12 @@ async function getModelFileNameAndCallImportXML(modelId, jsonData) {
   try {
 	filename = jsonData[modelId]['files']['main']['0']['name']; // assumes file we want is '0' record 
 	//console.log('getModelFileNameAndCallImportXML: ', filename);
-	await importXml(modelId, filename);
+	await getModelFile(modelId, filename);
   }
   catch(err) {
-	filename = 'Not Found';
+	console.log('getModelFileNameAndCallImportXML():', err);
 	const errorStr = filename + ': NOT found!';
+	// need to reset search at this point, wheel spinning.
     alert(errorStr);	
   }
   return filename;
@@ -390,44 +392,25 @@ async function getBiomodelsInfo(query) {
 	return models;
 }
 
-async function importXml(modelId, fileName) {
+
+// Get URL of biomodel and then get model, calls getBiomodel.js ->getModel()
+async function getModelFile(modelId, fileName) {
   clearPreviousLoads;
-  const apiUrl = `https://www.ebi.ac.uk/biomodels/model/download/${modelId}?filename=${fileName}`;
-// Ex: https://www.ebi.ac.uk/biomodels/model/download/BIOMD0000000444?filename=BIOMD0000000444_url.xml
-  if (isValidUrl(apiUrl)) {
-	  xmlRecList1Loader.classList.add("showLoader")
-    await fetch(proxy + apiUrl)
-      .then((response) => response.text())
-      .then((data) => {
-        // console.log(data.description);
-        sbmlTextArea.value = data;
+  console.log('importXML: ', modelId, ', ',fileName);
+   await getModel(modelId)
+      .then((response) => {
+        // console.log(response);
+		const filename = response[0];
+		const sbmlStr = response[1];
+		sbmlTextArea.value = response[1];
 		processSBML(); // generate antimony version
 		xmlRecList1Loader.classList.remove("showLoader")
+		//importXml(modelId, response)
       })
-      .catch((err) => console.error(err));
-  } else {
-    alert("Invalid Model ID");
+	.catch((err) => console.error(err));
   }
-  
-}
 
-async function processJSONModelInfo(modelId,modelInfoJSON) { 
- try {
-  const mainFilesList = modelInfoJSON.main 
-  var curList = '';
-  if( mainFilesList.length >0 ) {
-    let modelInfo = mainFilesList[0];
-	const modelFileName = modelInfo.name;
-    importXml(modelId, modelFileName); 
-  }
-  else { window.alert('No sbml model found'); }
- }
- catch (err) {
- console.log('processing file error: :', err);
- window.alert(err);
- }
- 
-}
+
 
 async function downloadBiomodelsSBML(modelId) { // grab SBML file from BioModels.
 
