@@ -8,12 +8,13 @@ This repository hosts the website used to convert Antimony models to SBML (Syste
 
 Antimony (https://github.com/sys-bio/antimony). Antimony is a modular model definition language used in Systems Biology for modeling chemical networks. Please see https://sbml.org for more information on SBML .  
 
+To deploy on your own website just copy the project into a subdirectory of your website. index.html is the landing page, example: http://mysite.com/mysubdir/makesbml/index.html 
 
 Project structure
 - `root` directory: contains this file, index.html, style.css, main.js, and LICENSE files. main.js contains the main code for processing sbml and antimony model files and the Biomodels search and download functions.
 - `docs` directory: documentation (none currently)
 - `antimony` directory: contains libantimony.js and libantimony.wasm files.
-- `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. 
+- `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. Contains a javascript file to access the BioModels cache in github repository: https://github.com/sys-bio/BiomodelsStore.   
 
 ## Antimony javascript library
 This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimony to SBML and vice-versa. These two files are libantimony.js and libantimony.wasm. 
