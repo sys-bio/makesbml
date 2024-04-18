@@ -1,12 +1,11 @@
 
-import {getModel} from "./buildBiomodelsSearch/getBiomodels.js";
+import {searchModels, getModel} from "./buildBiomodelsSearch/getBiomodels.js";
 let { log } = console;
 
 let models = [];
-const maxRec = 15;
-//const proxy = " https://api.allorigins.win/raw?url="; // A free and open source javascript AnyOrigin alternative, 
-const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/biomodelsinfo.json";
-const makeSBMLversion = "MakeSBML version 1.3. ";
+//const maxRec = 15; currently Not used
+const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/cached_biomodels.json";
+const makeSBMLversion = "MakeSBML version 1.4. ";
 const makeSBMLinfo = makeSBMLversion + "\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
@@ -61,7 +60,7 @@ window.onload = function() {
 	const createRecItem = (id_nameMap, onclickEvent) => {    
 	const itr = id_nameMap.values();
 	const id = itr.next().value;
-	const name = itr.next().value;
+	const name = itr.next().value.name;
     const maxNameLength = 50;
     let li = document.createElement("li");
     let a = document.createElement("a");
@@ -102,15 +101,19 @@ window.onload = function() {
 	  document.getElementById("sbmlcode").value = '[SBML code here.]'; // Clear out old model 
 	  handleDownloadModel(); // view biomodel that user selected.
     };
-
-	if (recommends?.entries()) {
+	let recommendMap = recommends.models;
+	if (recommendMap?.entries()) {
 	   var numb = 0;
       xmlRecList1.innerHTML = "";
-     // recommends = recommends?.slice(0, maxRec); // grab the first maxRec entries
-      for (const rec of recommends) {
-		  // Chk if id starts with 'BIOMD'
-        xmlRecList1.append(createRecItem(rec, handleSelection)); // rec -> one Map entry (id, name)
-		numb+=1;
+     // recommendMap = recommendMap?.slice(0, maxRec); // grab the first maxRec entries
+      for (const rec of recommendMap) {
+		// Chk if id starts with 'BIOMD' : implies model has been curated
+		const itr = rec.values();
+	    const id = itr.next().value;
+		if(id.includes('BIOMD')) {
+          xmlRecList1.append(createRecItem(rec, handleSelection)); // rec -> one Map entry (id, name)
+		  numb+=1;
+		}
       }
     }
 
@@ -250,6 +253,7 @@ async function processFile(fileStr) {
   }
   jsFree(ptrFileStr);
 }
+
 function copyToClipboard(copyType) {
   var copyText;
   if (copyType == "antimony") {
@@ -257,7 +261,6 @@ function copyToClipboard(copyType) {
   } else {
     copyText = sbmlTextArea;
   }
-
   // Select the text field
   copyText.select();
   copyText.setSelectionRange(0, 99999); // For mobile devices
@@ -315,24 +318,6 @@ function checkIfInString(searchStr, queryAr, resultAr) {
   return resultAr;	
 }
 
-	// modelId: biomodels id, jsonData: cached biomodels info in json format.
-async function getModelFileNameAndCallImportXML(modelId, jsonData) { 
-  let filename = '';
-  try {
-	filename = jsonData[modelId]['files']['main']['0']['name']; // assumes file we want is '0' record 
-	//console.log('getModelFileNameAndCallImportXML: ', filename);
-	await getModelFile(modelId, filename);
-  }
-  catch(err) {
-	console.log('getModelFileNameAndCallImportXML():', err);
-	const errorStr = filename + ': NOT found!';
-	// need to reset search at this point, wheel spinning.
-    alert(errorStr);	
-  }
-  return filename;
-		
-}
-
 async function getModelList(newQuery, jsonData) { // Get list of biomodels that match user query
   let queries;
   if(newQuery != null) {
@@ -381,22 +366,14 @@ async function getModelList(newQuery, jsonData) { // Get list of biomodels that 
 async function getBiomodelsInfo(query) {  
 	console.log('In getBiomodelsInfo()');
 	let models;
-	//const apiUrl = '/makesbml/buildBiomodelsSearch/biomodelsinfo.json'
-	await fetch(biomodelsInfoURL)
-     .then((response) => response.json())
-     .then((json) => {
-	//console.log(json);
-	 xmlRecList1Loader.classList.remove("showLoader")
-	 models = getModelList(query, json)
-	  });	
-	return models;
+	xmlRecList1Loader.classList.remove("showLoader");
+	return searchModels(query) //fetch(biomodelsInfoURL)
 }
 
-
 // Get URL of biomodel and then get model, calls getBiomodel.js ->getModel()
-async function getModelFile(modelId, fileName) {
+async function getModelFile(modelId) {
   clearPreviousLoads;
-  console.log('importXML: ', modelId, ', ',fileName);
+  //console.log('importXML: ', modelId);
    await getModel(modelId)
       .then((response) => {
         // console.log(response);
@@ -405,24 +382,9 @@ async function getModelFile(modelId, fileName) {
 		sbmlTextArea.value = response[1];
 		processSBML(); // generate antimony version
 		xmlRecList1Loader.classList.remove("showLoader")
-		//importXml(modelId, response)
       })
 	.catch((err) => console.error(err));
   }
-
-
-
-async function downloadBiomodelsSBML(modelId) { // grab SBML file from BioModels.
-
-  let modelFileName = '';
-  await fetch(biomodelsInfoURL)
-     .then((response) => response.json())
-     .then((json) => {
-	//console.log(json);
-	 modelFileName = getModelFileNameAndCallImportXML(modelId, json);
-	  });	
- 
-}
 
 async function processUserQuery(queryStr) {
   let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);
@@ -439,17 +401,22 @@ async function processUserQuery(queryStr) {
 }
 
 async function getModelIdRecommendNew(query) {
-  const biomodelsQuery = await processUserQuery(query); 
-  const format = "json";
   xmlRecList1Loader.classList.add("showLoader")
- 
   return getBiomodelsInfo(query);
 }
 
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
-	  xmlRecList1Loader.classList.add("showLoader")
-	await downloadBiomodelsSBML(xmlDownloadInput.value.trim());
+	xmlRecList1Loader.classList.add("showLoader")
+	try{
+	  await getModelFile(xmlDownloadInput.value.trim()); // Download SBML and display.
+	 }
+	catch(err) {
+	  console.log('handleDownloadModel():', err);
+	  const errorStr = modelId + ': NOT found!';
+	  window.alert(errorStr);		
+	 }
+		
   }
 }
 
