@@ -4,8 +4,8 @@ let { log } = console;
 
 let models = [];
 //const maxRec = 15; currently Not used
-const biomodelsInfoURL = "/makesbml/buildBiomodelsSearch/cached_biomodels.json";
-const makeSBMLversion = "MakeSBML version 1.4. ";
+const biomodelsInfoURL = "./buildBiomodelsSearch/cached_biomodels.json";
+const makeSBMLversion = "MakeSBML version 1.5. ";
 const makeSBMLinfo = makeSBMLversion + "\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
@@ -74,9 +74,17 @@ window.onload = function() {
 
   xmlDownloadInput.addEventListener("click", (e) => {
     e.preventDefault();
-    xmlRecList1.style.display = "block";
+    xmlRecList1.style.display = "block"; // allow list of models to be displayed below input box. 
     e.stopPropagation();
   });
+  
+  xmlDownloadInput.addEventListener("mousedown", (event) => {
+	  xmlRecList1.style.display = "block";
+  });
+  
+  /*xmlDownloadInput.addEventListener("mouseup", (event) => {
+	  xmlRecList1Loader.classList.remove("showLoader");
+  }); */
     
   function delay(fn, ms) { // use to delay event from triggering.
     let timer = 0
@@ -92,8 +100,8 @@ window.onload = function() {
       xmlRecList1.innerHTML = "";
       return;
     }
-	log("processkeySearch(): ", e );
-    let recommends = await getModelIdRecommendNew(searchText);
+	xmlRecList1Loader.classList.add("showLoader");
+	let recommends = await getBiomodelsInfo(searchText);
     const handleSelection = (e) => {
       e.preventDefault();
       const text = e.target.innerText;
@@ -119,18 +127,17 @@ window.onload = function() {
 
   };
 
-  // Do not start processing user search until at least 1000 ms has elapsed.
+  // Do not start processing user search until at least 500 ms has elapsed.
   // We want to reduce the number of searches and speed up populating result list.
-  xmlDownloadInput.addEventListener("keyup", async (e) => {
-     delay(processkeySearch(e), 1000);});  
- 
+  xmlDownloadInput.addEventListener("keyup", async (e) => {  
+	delay(processkeySearch(e), 500);});
   saveSBMLBtn.addEventListener("click", (_) => saveCode("sbml"));
   copySBMLBtn.addEventListener("click", (_) => copyToClipboard("sbml"));
   aboutBtn.addEventListener("click", (_) => showAbout());  
   
-  document.body.onclick = (e) => {
-    xmlRecList1.style.display = "none";
-  };
+  //document.body.onclick = (e) => {
+    //xmlRecList1.style.display = "none"; // deletes/clears next dropdown list if using mouse
+  //};
 
 
   inputFile.addEventListener("change", function() {
@@ -234,7 +241,8 @@ async function processFile(fileStr) {
       procSBMLBtn.disabled = true;
       sbmlTextArea.value = "[SBML code here.]";
       await processAntimony();
-	  xmlRecList1Loader.classList.remove("showLoader");// added in inputFile.addEventListener("change" )
+	  xmlRecList1Loader.classList.remove("showLoader");// Remove drop-down list of biomodels
+													   // added in inputFile.addEventListener("change" )
     } else if (loadSBMLString(ptrFileStr) > 0) {
       sbmlTextArea.value = fileStr;
       procAntimonyBtn.disabled = true;
@@ -297,117 +305,38 @@ function saveCode(codeType) {
     
   }
 }
-function isValidUrl(str) {
-  const pattern = new RegExp(
-    "^([a-zA-Z]+:\\/\\/)?" + // protocol
-    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-    "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
-    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-    "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-    "(\\#[-a-z\\d_]*)?$", // fragment locator
-    "i"
-  );
-  return pattern.test(str);
-}
-
-function checkIfInString(searchStr, queryAr, resultAr) {
-  for( let i=0; i < queryAr.length; i++) {
-	if(searchStr.toLowerCase().includes(queryAr[i].toLowerCase())) {
-	  resultAr[i] = true; }
-  }	  
-  return resultAr;	
-}
-
-async function getModelList(newQuery, jsonData) { // Get list of biomodels that match user query
-  let queries;
-  if(newQuery != null) {
-    queries = newQuery.split(" "); }
-  else { newQuery = ''; queries = ''; }
-  let found = []; // keep track if queries are found.
-  
-  const results = new Map();
-  for (var model in jsonData) {
-	for(let i =0; i < queries.length; i++) {
-	  found[i] = false; }
-    for ( var key in jsonData[model]) {
-	  if (key == 'name') {
-	   // console.log(jsonData[model][key]);
-		found = checkIfInString(jsonData[model][key], queries, found);
-	  }
-	  else if (key == 'description') {
-		found = checkIfInString(jsonData[model][key], queries, found);
-	  }
-	  else if (key == 'publication') {
-		for (var key2 in jsonData[model][key]) {
-		  if(key2 == 'authors') {
-			for(var author in jsonData[model][key][key2]) {
-			 // console.log(jsonData[model][key][key2][author]['name']);
-			  found = checkIfInString(jsonData[model][key][key2][author]['name'], queries, found);
-			}				
-		  }
-		  // now search 'title':
-		  if(key2 == 'title') {
-			found = checkIfInString(jsonData[model][key][key2], queries, found);  
-		  }
-		}			
-	  }
-	}
-	let save = 0;
-	for( let i =0; i < found.length ; i++) {
-	  if(found[i]) { save +=1; }	
-	} 	
-	if (save == found.length){ results.set( model, jsonData[model]['name'] );}
-  }
-  return results;
-}
 
 
 	// loads biomodels cache and returns models that match query
 async function getBiomodelsInfo(query) {  
-	console.log('In getBiomodelsInfo()');
 	let models;
-	xmlRecList1Loader.classList.remove("showLoader");
+	xmlRecList1Loader.classList.remove("showLoader"); // Remove drop-down list of biomodels ??
 	return searchModels(query) //fetch(biomodelsInfoURL)
 }
 
 // Get URL of biomodel and then get model, calls getBiomodel.js ->getModel()
 async function getModelFile(modelId) {
   clearPreviousLoads;
-  //console.log('importXML: ', modelId);
    await getModel(modelId)
       .then((response) => {
-        // console.log(response);
 		const filename = response[0];
 		const sbmlStr = response[1];
 		sbmlTextArea.value = response[1];
 		processSBML(); // generate antimony version
-		xmlRecList1Loader.classList.remove("showLoader")
+		xmlRecList1Loader.classList.remove("showLoader") // Remove drop-down list of biomodels 
+		xmlRecList1.style.display = "none"; // Clear drop-down list of biomodels 
       })
 	.catch((err) => console.error(err));
   }
 
-async function processUserQuery(queryStr) {
-  let query = queryStr.split(/(\s)/).filter((x) => x.trim().length>0);
-  //log('Query: ',query, query.length)
-  let searchQuery = '';
-  for(let i = 0; i < query.length; i++) {
-	if(i == query.length - 1) {
-	  searchQuery += query[i];}
-    else {
-	  searchQuery += query[i] +'%20';}	
-  }
-  //log(' --> search: ',searchQuery);
-  return searchQuery;	
-}
-
 async function getModelIdRecommendNew(query) {
-  xmlRecList1Loader.classList.add("showLoader")
+  xmlRecList1Loader.classList.add("showLoader") // Show drop-down list of biomodels
   return getBiomodelsInfo(query);
 }
 
 async function handleDownloadModel() {
   if (xmlDownloadInput.value.trim().length > 1) {
-	xmlRecList1Loader.classList.add("showLoader")
+	xmlRecList1Loader.classList.add("showLoader") // Show drop-down list of biomodels 
 	try{
 	  await getModelFile(xmlDownloadInput.value.trim()); // Download SBML and display.
 	 }
