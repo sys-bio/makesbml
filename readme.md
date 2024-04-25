@@ -14,8 +14,8 @@ Project structure
 - `root` directory: contains this file, index.html, style.css, main.js, and LICENSE files. main.js contains the main code for processing sbml and antimony model files and the BioModels (https://www.ebi.ac.uk/biomodels/) search and download functions.
 - `docs` directory: documentation (none currently)
 - `antimony` directory: contains libantimony.js library.
-- `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. Contains a javascript file to access the BioModels cache in github repository: https://github.com/sys-bio/BiomodelsStore.   
+- `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (cached_biomodels.json) which is used as a cache to speed up the search of the Biomodels repository. Contains a javascript file to access the BioModels cache in github repository: https://github.com/sys-bio/BiomodelsStore.   
 
 ## Antimony javascript library
-This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimony to SBML and vice-versa. These two files are libantimony.js and libantimony.wasm. 
-Please see the libantimonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying libantimony.js and libantimony.wasm files for use on this site.
+This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimony to SBML and vice-versa. These two files are merged into the libantimony.js library. 
+Please see the libantimonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying the libantimony.js file used on this site.
