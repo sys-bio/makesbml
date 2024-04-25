@@ -13,7 +13,7 @@ To deploy on your own website just copy the project into a subdirectory of your 
 Project structure
 - `root` directory: contains this file, index.html, style.css, main.js, and LICENSE files. main.js contains the main code for processing sbml and antimony model files and the BioModels (https://www.ebi.ac.uk/biomodels/) search and download functions.
 - `docs` directory: documentation (none currently)
-- `antimony` directory: contains libantimony.js and libantimony.wasm files.
+- `antimony` directory: contains libantimony.js library.
 - `buildBiomodelsSearch` directory: Contains python script that generates a json file of BioModels search information (biomodelsinfo.json) which is used as a cache to speed up the search of the Biomodels repository. Contains a javascript file to access the BioModels cache in github repository: https://github.com/sys-bio/BiomodelsStore.   
 
 ## Antimony javascript library
