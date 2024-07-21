@@ -5,7 +5,7 @@ let { log } = console;
 let models = [];
 //const maxRec = 15; currently Not used
 const biomodelsInfoURL = "./buildBiomodelsSearch/cached_biomodels.json";
-const makeSBMLversion = "MakeSBML version 1.5. ";
+const makeSBMLversion = "MakeSBML version 1.6. ";
 const makeSBMLinfo = makeSBMLversion + "\nCopyright 2023-24, Bartholomew Jardine and Herbert M. Sauro,\nUniversity of Washington, USA.\nSpecial thanks to University of Washington student Tracy Chan for her assistance with this software.\n\nThis project was funded by NIH/NIGMS (R01GM123032 and P41EB023912).";
 
 var antCode;
