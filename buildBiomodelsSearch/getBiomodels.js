@@ -1,22 +1,22 @@
 // Depends on sbml model files in a github repository
-import { Octokit, App } from "https://esm.sh/octokit"; //IMported in index.html
 
-const cache = "./buildBiomodelsSearch/cached_biomodels.json";
+import { Octokit, App } from "https://esm.sh/octokit"; //Imported in index.html
+
 const github_owner = "sys-bio";
 const github_repo = "BiomodelsStore";
 const github_repo_cache = "BiomodelsCache";
+const biomodels_json_db_path = "src/cached_biomodels.json"
 
 
-// The cache of models retrieved from a JSON file
-//const cachedData: CachedData = cache;
+// The cache of model information retrieved from a JSON file, used to search for user requested model.
 var cachedData;
 
-// URL for the chosen model
+// URL for the chosen model to download.
 let url;
 
 /**
- * Function to search for models using the cached data
- * @param {searchStr} search - The search event
+ * Function to search for models using the cached data (json format) located in a GitHub repo. 
+ * @param {searchStr} search - The search terms, string with terms separated by a space.
  * @returns {Promise<Models>} - A promise containing the models returned by the search
  */
 export async function searchModels(searchStr) {
@@ -24,12 +24,32 @@ export async function searchModels(searchStr) {
         // Get the search query
         const queryText = searchStr.trim();
         const models = {models:new Map()};
-		await fetch(cache)
-		 .then((response) => response.json())
-		 .then((json) => {
-	//console.log(json);
-	 	  cachedData = json;
 		
+		// Fetch the json model DB from the GitHub repository using the GitHub API
+        const octokit = new Octokit();
+        const response = await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
+          owner: github_owner,
+          repo: github_repo_cache,
+          path: biomodels_json_db_path ,
+          headers: {
+            "Accept": "application/vnd.github+json"
+          }
+        });
+        
+		if ("download_url" in response.data) {
+			  const fileURL = response.data.download_url;
+			  await fetch(fileURL)
+				.then((response2) => response2.json())
+				.then((json) => {
+				cachedData = json;
+				});
+		
+        } else {
+          throwError("Unable to fetch model DB from GitHub repository: "+ github_owner+" - " + github_repo_cache);
+          return ["", "Unable to fetch model DB from "+ github_owner+" - " + github_repo_cache + " repository."];
+        }
+		
+		// ****************************
           for (const id in cachedData) {
           // if the query has multiple words, split them and check if all words are in a model
             const modelData = cachedData[id];
@@ -65,15 +85,13 @@ export async function searchModels(searchStr) {
             });
            }
           }
-		 });
+		// });
         return models;
     } catch (error) {
         // If there is an error, throw it
-        throwError("Unable to fetch models from cache.");
+        throwError("Unable to fetch models from " + github_owner+" - " + github_repo + " repository cache.");
     }
 }
-
-
 
 /**
  * Function to get a model from a GitHub repository
