@@ -19,3 +19,7 @@ Project structure
 ## Antimony javascript library
 This website loads a module consisting of a javascript wrapper of a Web Assembly library (.wasm) that translates Antimony to SBML and vice-versa. These two files are merged into the libantimony.js library. 
 Please see the libantimonyjs git hub site ( https://github.com/sys-bio/libantimonyjs ) for information on using, building or modifying the libantimony.js file used on this site.
+
+## Cite MakeSBML:
+Jardine BE, Smith LP, Sauro HM. MakeSBML: a tool for converting between Antimony and SBML. J Integr Bioinform. 2024 Jun 11;21(1):20240002. doi: 10.1515/jib-2024-0002. PMID: 38860571; PMCID: PMC11294058 (https://www.degruyter.com/document/doi/10.1515/jib-2024-0002/html).
+
