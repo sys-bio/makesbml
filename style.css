@@ -1,231 +1,745 @@
-body{
-background-color: #cdccd1;
-}
-body::-webkit-scrollbar {
-display: none;
-}
-h1{
-color: #293D56;
-text-align: center;
-font-size: 65px;
-}
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-font-family: "Trebuchet MS",
-Arial, Helvetica, sans-serif;
-}
-textarea{
-padding: 12px;
-border:none;
-border-radius: 8px;
-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-height: 70%;
-resize: horizontal;
+/* ==========================================================================
+   MakeSBML - visual styles
+   Tokens live in :root; everything below is expressed in terms of them.
+   ========================================================================== */
+
+:root {
+  /* Palette */
+  --c-navy:          #293D56;
+  --c-heading:       #293D56;
+  --c-navy-dark:     #1d2c3e;
+  --c-navy-light:    #3a5474;
+  --c-accent:        #2f7fb5;
+
+  --c-bg:            #eef1f5;
+  --c-bg-panel:      #ffffff;
+  --c-bg-sunken:     #f6f8fa;
+  --c-bg-hover:      #e7ecf2;
+
+  --c-text:          #1f2b38;
+  --c-text-muted:    #5c6b7a;
+  --c-text-invert:   #ffffff;
+
+  --c-border:        #d3dae2;
+  --c-border-strong: #b7c2ce;
+  --c-focus:         #7fb3d5;
+  --c-ring:          rgba(127, 179, 213, 0.35);
+  --c-ring-accent:   rgba(47, 127, 181, 0.25);
+
+  /* Type */
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+             Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  /* Spacing scale */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+
+  /* Shape */
+  --radius-sm: 4px;
+  --radius:    8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 28, 42, 0.08);
+  --shadow:    0 2px 8px rgba(16, 28, 42, 0.10);
+  --shadow-lg: 0 8px 24px rgba(16, 28, 42, 0.14);
+
+  --control-h: 2.25rem;
 }
 
-input:focus {
-border: 3px solid white;	
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-select:focus {
-border: 3px solid white;
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
-
-#procAntimonyBtn, #procSBMLBtn{
-background-color: #293D56;
-color: white;
-border: none;
-outline: none;
-font-size: 25px;
-/* position: absolute; */
-width: 36px;
-height: 36px;
-/* border-radius: 50%; */
-border-radius: 10px;
-text-align: center;
-
-/* left: 50%;
-transform: translate(-50%, -50%); */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
 }
 
-#procAntimonyBtn:focus {
-border: 3px solid white;	
-}
-#procSBMLBtn:focus {
-border: 3px solid white;	
-}
-
-
-#wrapper{
-position: relative;
-display: flex;
-align-items: center;
-justify-content: center;
-height: 80vh;
-}
-.link-box{
- height: 2vh; 
- display: flex; 
- align-items: center;
- flex-direction: row;  
- justify-content: center;
+/* The app fills the viewport so the model panes can absorb the leftover
+   space. dvh tracks mobile browser chrome; vh is the fallback. */
+#app {
+  max-width: 1500px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-5) var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
 }
 
-.about-box{
- height: 2vh; 
- display: flex; 
- align-items: center;
- flex-direction: row;  
- justify-content: center;	
+.site-header,
+.site-footer {
+  flex: 0 0 auto;
 }
 
-#antimony-code-wrapper, #sbml-code-wrapper{
-display: flex;
-flex-direction: column;
-/* align-items: center; */
-justify-content: center;
-height: 100vh;
-gap: 10px;
-position: relative;
-}
-.input-wrapper{
-display: flex;
-justify-content: space-around;
-align-items: center;
-}
-.input-wrapper > input{
-padding: 7px;
-border-radius: 6px;
-}
-.link-btn{
-padding: 5px;
-width: 180px;
-z-index: 1000;
-color:#293D56;
-height: 30px;
-border-radius: 6px;
+/* min-height:0 lets these shrink below their content, so a short window
+   scrolls the page instead of clipping the panes. */
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
 
-.about-btn{
-padding: 5px;
-background-color:#293D56;
-color:white
-z-index: 1000;
-height: 30px;
-border-radius: 6px;
+.site-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  text-align: center;
 }
 
-#convert-btn-wrapper{
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 20px;
-width: 20px;
-z-index: 1000;
-color:#293D56;
+h1 {
+  margin: 0;
+  color: var(--c-heading);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
-#inputfile, #xml-id-wrapper{
-position: absolute;
-top: calc(15vh - 40px);
-display:flex;
-width: 100%;
-justify-content: space-between;
-align-items: center;
-color:#293D56;
 
+.subtitle {
+  margin: 0;
+  max-width: 46rem;
+  color: var(--c-text-muted);
+  font-size: 1rem;
 }
-/*  ******************** */
+
+.link-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-1);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons and controls
+   -------------------------------------------------------------------------- */
+
+.btn,
 input[type="file"]::file-selector-button,
 #xml-download-wrapper button,
 #xml-import-wrapper button {
-  background-color: #293D56;
-  border: none;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  height: 30px;
-  color: white;
-  padding: 2px 3px;
+  height: var(--control-h);
+  padding: 0 var(--sp-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background-color: var(--c-navy);
+  color: var(--c-text-invert);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 120ms ease, box-shadow 120ms ease,
+              transform 60ms ease, opacity 120ms ease;
 }
 
+.btn:hover,
+input[type="file"]::file-selector-button:hover,
+#xml-download-wrapper button:hover,
+#xml-import-wrapper button:hover {
+  background-color: var(--c-navy-light);
+  box-shadow: var(--shadow);
+}
 
-#xml-download-wrapper button,
-#xml-import-wrapper button,
+.btn:active {
+  transform: translateY(1px);
+  background-color: var(--c-navy-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-link {
+  min-width: 12rem;
+}
+
+/* Visible, consistent focus ring for every interactive control. */
+.btn:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Layout: the two model panes
+   -------------------------------------------------------------------------- */
+
+#wrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--sp-4);
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.pane,
+#antimony-code-wrapper,
+#sbml-code-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--sp-4);
+  background-color: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+/* Fixed-height control strip so both panes line up horizontally. */
+.pane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: var(--control-h);
+}
+
+.drop-hint {
+  color: var(--c-text-muted);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+/* Drop target feedback - dragdrop.js toggles .is-drag-over on each pane. */
+.pane.is-drag-over {
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 3px var(--c-ring-accent), var(--shadow);
+}
+
+.pane.is-drag-over textarea {
+  border-color: var(--c-accent);
+  background-color: var(--c-bg-hover);
+}
+
+/* --------------------------------------------------------------------------
+   Model text panes
+   -------------------------------------------------------------------------- */
+
+textarea {
+  flex: 1 1 auto;
+  width: 100%;
+  /* The pane absorbs whatever vertical space the page has left over. The
+     floor is deliberately small: anything taller than a short browser window
+     would push the buttons and footer out of reach. Long models scroll inside
+     the pane, and the resize handle is still there for manual adjustment. */
+  min-height: 16rem;
+  padding: var(--sp-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background-color: var(--c-bg-sunken);
+  color: var(--c-text);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  tab-size: 4;
+  resize: vertical;
+  white-space: pre;
+  overflow: auto;
+}
+
+textarea:focus {
+  border-color: var(--c-focus);
+  background-color: var(--c-bg-panel);
+}
+
+textarea::placeholder {
+  color: var(--c-text-muted);
+}
+
+.input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  align-items: center;
+  justify-content: center;
+}
+
+.input-wrapper > .btn {
+  flex: 1 1 auto;
+  max-width: 18rem;
+}
+
+/* --------------------------------------------------------------------------
+   Convert buttons (between the panes)
+   -------------------------------------------------------------------------- */
+
+#convert-btn-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  align-self: center;
+}
+
+#procAntimonyBtn,
+#procSBMLBtn {
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background-color: var(--c-navy);
+  color: var(--c-text-invert);
+  font-family: var(--font-ui);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 120ms ease, box-shadow 120ms ease,
+              transform 60ms ease, opacity 120ms ease;
+}
+
+#procAntimonyBtn:hover,
+#procSBMLBtn:hover {
+  background-color: var(--c-accent);
+  box-shadow: var(--shadow);
+}
+
+#procAntimonyBtn:active,
+#procSBMLBtn:active {
+  transform: translateY(1px);
+  background-color: var(--c-navy-dark);
+}
+
+#procAntimonyBtn:disabled,
+#procSBMLBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   File input
+   -------------------------------------------------------------------------- */
+
+#inputfile {
+  width: 100%;
+  max-width: 100%;
+  color: var(--c-text-muted);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+}
+
+input[type="file"]::file-selector-button {
+  margin-right: var(--sp-3);
+}
+
+/* --------------------------------------------------------------------------
+   BioModels search
+   -------------------------------------------------------------------------- */
+
+#xml-id-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+}
+
+#xml-download-wrapper {
+  position: relative;
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
 #xml-download-search,
 #xml-import-search {
+  position: relative;
   display: flex;
-  gap: 5px;
-  height: 30px;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+#xml-id-search-input1,
+#xml-id-input2 {
+  width: 100%;
+  max-width: 24rem;
+  height: var(--control-h);
+  padding: 0 2.25rem 0 var(--sp-3);
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--radius);
+  background-color: var(--c-bg-panel);
+  color: var(--c-text);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+#xml-id-search-input1:focus,
+#xml-id-input2:focus {
+  border-color: var(--c-focus);
+  box-shadow: 0 0 0 3px var(--c-ring);
+}
+
+#xml-id-search-input1::placeholder {
+  color: var(--c-text-muted);
+}
+
+#xml-import-wrapper {
+  flex: 0 0 auto;
+}
+
+/* Spinner - main.js toggles .showLoader, so the default must stay display:none. */
+.loader {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: var(--sp-3);
+  margin-top: -8px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--c-border);
+  border-top-color: var(--c-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 .showLoader {
   display: flex !important;
 }
 
-.loader {
-  display: none;
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
-  margin-top: 8px; /* 2px; */
-  margin-left: -30px; /* -21px; */
-  width: 16px;
-  height: 16px;
-  animation: spin 1s linear infinite;
-}
-
-
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-
-#xml-id-search-input1,
-#xml-id-input2 {
-  outline: none;
+/* Suggestion dropdown - main.js sets display block/none inline. */
+#rec1-wrapper,
+#rec2-wrapper {
   position: relative;
-  width: 300px;
 }
 
 #xml-1-rec,
 #xml-2-rec {
+  display: none;
   position: absolute;
   z-index: 5000;
-  list-style-type: none;
-  padding: 0;
+  top: var(--sp-1);
+  left: 0;
+  width: max-content;
+  max-width: min(38rem, 90vw);
+  max-height: 22rem;
+  overflow-y: auto;
   margin: 0;
-  text-decoration: none;
-  display: none;
+  padding: var(--sp-1);
+  list-style-type: none;
+  background-color: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
 }
 
 #xml-1-rec li a,
 #xml-2-rec li a {
-  border: 1px solid #ddd;
-  margin-top: -1px;
-  /* Prevent double borders */
-  background-color: #f6f6f6;
-  padding: 5px;
-  font-size: 16px;
   display: block;
-  color: black;
-  max-width: 35em; 
+  padding: var(--sp-2) var(--sp-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--c-text);
+  font-size: 0.875rem;
+  text-decoration: none;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 #xml-1-rec li a:hover,
 #xml-2-rec li a:hover {
-  background-color: #eee;
+  background-color: var(--c-bg-hover);
+  color: var(--c-navy);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.site-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--c-border);
+}
+
+.about-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#visitor-counter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  color: var(--c-text-muted);
+  font-size: 0.75rem;
+}
+
+#visitor-counter a {
+  color: var(--c-text-muted);
+}
+
+#visitor-counter img {
+  vertical-align: middle;
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens - the two panes stack
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  #app {
+    padding: var(--sp-4) var(--sp-3);
+    gap: var(--sp-4);
+  }
+
+  #wrapper {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-3);
+  }
+
+  /* The convert buttons become a horizontal row between the stacked panes. */
+  #convert-btn-wrapper {
+    flex-direction: row;
+    padding: var(--sp-1) 0;
+  }
+
+  #procAntimonyBtn,
+  #procSBMLBtn {
+    transform: rotate(90deg);
+  }
+
+  #procAntimonyBtn:active,
+  #procSBMLBtn:active {
+    transform: rotate(90deg) translateX(1px);
+  }
+
+  /* Stacked: two panes cannot both fill the viewport, so give each an
+     explicit share of it and let the page scroll. */
+  #wrapper {
+    flex: 0 0 auto;
+  }
+
+  textarea {
+    flex: 0 0 auto;
+    height: 50vh;
+    height: 50dvh;
+    min-height: 16rem;
+    max-height: 40rem;
+  }
+
+  .drop-hint {
+    display: none;
+  }
+
+  #xml-id-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #xml-id-search-input1 {
+    max-width: 100%;
+  }
+
+  .btn-link {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    animation-duration: 2.4s;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   THEME PREVIEW - alternate palettes
+   Each block only redefines colour tokens; no layout rules belong here.
+   Activated by data-theme on <html>. The default (no attribute) is Slate.
+   ========================================================================== */
+
+/* --- Slate Dark: editor-style dark, pairs with the default Slate -------- */
+[data-theme="dark"] {
+  --c-navy:          #3b6ea5;
+  --c-heading:       #e6edf5;
+  --c-navy-dark:     #2c5580;
+  --c-navy-light:    #4a83bf;
+  --c-accent:        #58a6ff;
+
+  --c-bg:            #14181d;
+  --c-bg-panel:      #1c2128;
+  --c-bg-sunken:     #0f1318;
+  --c-bg-hover:      #262d36;
+
+  --c-text:          #d6dde5;
+  --c-text-muted:    #8a97a6;
+  --c-text-invert:   #ffffff;
+
+  --c-border:        #2d353f;
+  --c-border-strong: #3d4753;
+  --c-focus:         #58a6ff;
+  --c-ring:          rgba(88, 166, 255, 0.30);
+  --c-ring-accent:   rgba(88, 166, 255, 0.25);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow:    0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+/* --- Ink: high-contrast neutral, near-black controls -------------------- */
+[data-theme="ink"] {
+  --c-navy:          #18181b;
+  --c-heading:       #09090b;
+  --c-navy-dark:     #000000;
+  --c-navy-light:    #3f3f46;
+  --c-accent:        #2563eb;
+
+  --c-bg:            #fafafa;
+  --c-bg-panel:      #ffffff;
+  --c-bg-sunken:     #f4f4f5;
+  --c-bg-hover:      #ececee;
+
+  --c-text:          #09090b;
+  --c-text-muted:    #71717a;
+
+  --c-border:        #e4e4e7;
+  --c-border-strong: #d4d4d8;
+  --c-focus:         #2563eb;
+  --c-ring:          rgba(37, 99, 235, 0.28);
+  --c-ring-accent:   rgba(37, 99, 235, 0.22);
+}
+
+/* --- Nord Dark: soft blue-grey dark, lower glare ------------------------ */
+[data-theme="nord-dark"] {
+  --c-navy:          #5e81ac;
+  --c-heading:       #eceff4;
+  --c-navy-dark:     #4c6a92;
+  --c-navy-light:    #81a1c1;
+  --c-accent:        #88c0d0;
+
+  --c-bg:            #2e3440;
+  --c-bg-panel:      #3b4252;
+  --c-bg-sunken:     #292e39;
+  --c-bg-hover:      #434c5e;
+
+  --c-text:          #d8dee9;
+  --c-text-muted:    #9aa5b7;
+  --c-text-invert:   #eceff4;
+
+  --c-border:        #434c5e;
+  --c-border-strong: #4c566a;
+  --c-focus:         #88c0d0;
+  --c-ring:          rgba(136, 192, 208, 0.30);
+  --c-ring-accent:   rgba(136, 192, 208, 0.25);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow:    0 2px 8px rgba(0, 0, 0, 0.40);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.50);
+}
+
+/* --------------------------------------------------------------------------
+   Theme switcher (footer control)
+   -------------------------------------------------------------------------- */
+
+#theme-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  font-size: 0.75rem;
+  color: var(--c-text-muted);
+}
+
+#theme-switcher .ts-label {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+#theme-switcher .ts-row {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+#theme-switcher button {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 2px solid var(--c-border-strong);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 100ms ease, border-color 100ms ease;
+}
+
+#theme-switcher button:hover {
+  transform: scale(1.15);
+}
+
+#theme-switcher button[aria-pressed="true"] {
+  border-color: var(--c-accent);
+  transform: scale(1.15);
+}
+
+#theme-switcher .ts-name {
+  min-width: 7rem;
+  color: var(--c-text);
 }

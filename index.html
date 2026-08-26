@@ -7,99 +7,112 @@
   <script src="antimony/libantimony.js" type="text/javascript"></script>
   <script src="main.js" type="module"></script>
   <link href="style.css" rel="stylesheet" type="text/css" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the default.
+    try {
+      var t = localStorage.getItem("makesbml-theme");
+      if (t) document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+  </script>
   <title>Make SBML Models!</title>
 </head>
 
 <body>
- <a href='https://www.free-counters.org/'>free-counters.org</a> <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=e8305434ad27f921dd8acc9e9cfa79cf7d6a8ecd'></script>
-<script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1307156/t/0"></script>
   <div id="app">
-    <nav>
+    <header class="site-header">
       <h1>Make SBML Models!</h1>
-	  <h3  align="center">When choosing a file you can pick an SBML or Antimony file to convert </h3>
-    </nav>
-	</br>
-  <div class="link-box"> 
-  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-        onclick="window.open('https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics','_blank')" value="Antimony information">
-  <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-        onclick="window.open('https://sbml.org','_blank')"  value="SBML information">   
-  </div> 
- 
-  </br>
-    <div>
+      <p class="subtitle">When choosing a file you can pick an SBML or Antimony file to convert</p>
+      <div class="link-box">
+        <input type="button" class="btn btn-link"
+          onclick="window.open('https://tellurium.readthedocs.io/en/latest/antimony.html#introduction-and-basics','_blank')"
+          value="Antimony information">
+        <input type="button" class="btn btn-link"
+          onclick="window.open('https://sbml.org','_blank')" value="SBML information">
+      </div>
+    </header>
+
+    <main>
       <div id="wrapper">
-        <div id="antimony-code-wrapper">
-          <input type="file" name="inputfile" id="inputfile"> </br>
+
+        <section id="antimony-code-wrapper" class="pane">
+          <div class="pane-head">
+            <input type="file" name="inputfile" id="inputfile">
+            <span class="drop-hint">or drop a file on either panel</span>
+          </div>
           <textarea id="antimonycode" rows="20" cols="80" maxlength="1000000"
-            placeholder="[Antimony code here.]">	
+            placeholder="[Antimony code here.]">
 # Sample Antimony model:
 J0: S1 -> S2 + S3; k1*S1 # Mass-action kinetics
-J1: S2 -> S3 + S4; k2*S2 
-		
+J1: S2 -> S3 + S4; k2*S2
+
 S1 = 10 # The initial concentration of S1
 S2 = 0  # The initial concentration of S3
 S3 = 3  # The initial concentration of S3
 S4 = 0  # The initial concentration of S4
-			
+
 k1 = 0.1 # The value of the kinetic parameter from J0.
 k2 = 0.2 # The value of the kinetic parameter from J1.
-			</textarea>
-
+</textarea>
           <div class="input-wrapper">
-            <input type="button" id="saveAntimonyBtn" style="background-color:#293D56;color:white;"
-              value="Save Antimony to file">
-
-            <input type="button" id="copyAntimonyBtn" style="background-color:#293D56;color:white;"
-              value="Copy Antimony to clipboard">
+            <input type="button" class="btn" id="saveAntimonyBtn" value="Save Antimony to file">
+            <input type="button" class="btn" id="copyAntimonyBtn" value="Copy Antimony to clipboard">
           </div>
-        </div>
-       
+        </section>
+
         <div id="convert-btn-wrapper">
-          <button id="procAntimonyBtn" value="Convert Antimony to SBML">→</button>
-          <button id="procSBMLBtn">←</button>
-        </div>  
-        <div id="sbml-code-wrapper">
-
-          <div id="xml-id-wrapper">
-            <div id="xml-download-wrapper">
-              <div id='xml-download-search'>
-                <input autocomplete="off" id="xml-id-search-input1" placeholder="Search BioModels... Ex: sodium Whitcomb">
-                <div class="loader" id="loader-list1"></div>
-                </input>
-            <!--    <button> View </button> -->
-              </div>
-
-              <div id="rec1-wrapper">
-                <ul id="xml-1-rec">
-                </ul>
-              </div>
-            </div>
-            <div id="xml-import-wrapper">
-              <div id="rec2-wrapper">
-			  
-			   <input type="button" class="link-btn" style="background-color:#293D56;color:white;"
-			    onclick="window.open('https://www.ebi.ac.uk/biomodels/','_blank')" value="BioModels information">
-              </div>
-            </div>
-          </div>
-          </br>
-          <textarea id="sbmlcode" rows="20" cols="80" maxlength="2000000" placeholder="[SBML code here.]"></textarea>
-          <div class="input-wrapper" >
-            <input type="button" id="saveSBMLBtn" style="background-color:#293D56;color:white;"
-              value="Save SBML to file">
-            <input type="button" id="copySBMLBtn" style="background-color:#293D56;color:white;"
-              value="Copy SBML to clipboard">
-          </div>
-
+          <button id="procAntimonyBtn" title="Convert Antimony to SBML" aria-label="Convert Antimony to SBML">&rarr;</button>
+          <button id="procSBMLBtn" title="Convert SBML to Antimony" aria-label="Convert SBML to Antimony">&larr;</button>
         </div>
+
+        <section id="sbml-code-wrapper" class="pane">
+          <div class="pane-head">
+            <div id="xml-id-wrapper">
+              <div id="xml-download-wrapper">
+                <div id='xml-download-search'>
+                  <input autocomplete="off" id="xml-id-search-input1"
+                    placeholder="Search BioModels... Ex: sodium Whitcomb">
+                  <div class="loader" id="loader-list1"></div>
+                </div>
+                <div id="rec1-wrapper">
+                  <ul id="xml-1-rec"></ul>
+                </div>
+              </div>
+              <div id="xml-import-wrapper">
+                <div id="rec2-wrapper">
+                  <input type="button" class="btn btn-link"
+                    onclick="window.open('https://www.biomodels.org/','_blank')"
+                    value="BioModels information">
+                </div>
+              </div>
+            </div>
+          </div>
+          <textarea id="sbmlcode" rows="20" cols="80" maxlength="2000000"
+            placeholder="[SBML code here.]"></textarea>
+          <div class="input-wrapper">
+            <input type="button" class="btn" id="saveSBMLBtn" value="Save SBML to file">
+            <input type="button" class="btn" id="copySBMLBtn" value="Copy SBML to clipboard">
+          </div>
+        </section>
+
       </div>
-    </div>
-    <div class="about-box">
-      <input type="button" id="aboutBtn" class="about-btn" style="background-color:#293D56;color:white;" value="About">
-    <div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="about-box">
+        <input type="button" id="aboutBtn" class="btn" value="About">
+      </div>
+      <div id="theme-switcher"></div>
+      <div id="visitor-counter">
+        <a href='https://www.free-counters.org/'>free-counters.org</a>
+        <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=e8305434ad27f921dd8acc9e9cfa79cf7d6a8ecd'></script>
+        <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1307156/t/0"></script>
+      </div>
+    </footer>
   </div>
+
   <script type="module" src="main.js"></script>
+  <script src="dragdrop.js" defer></script>
+  <script src="theme-switcher.js" defer></script>
 </body>
 
 </html>
